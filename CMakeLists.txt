@@ -53,6 +53,9 @@ endif(UNIX AND NOT APPLE)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 
+# External Libraries
+find_package(Curses REQUIRED)
+
 # #########################################
 # For Debug, print aout all variables.
 # #########################################
@@ -66,8 +69,6 @@ if(CMAKE_DEBUG_VARIABLES)
         endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
-# External Libraries
-find_package(Curses REQUIRED)
 # find_library(LIB_VORBIS
 #     REQUIRED
 #     PATH_SUFFIXES .a
