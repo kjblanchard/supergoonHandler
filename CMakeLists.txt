@@ -53,8 +53,6 @@ endif(UNIX AND NOT APPLE)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 
-# External Libraries
-find_package(Curses REQUIRED)
 
 # #########################################
 # For Debug, print aout all variables.
@@ -118,12 +116,9 @@ target_compile_options(supergoonHandlerExe PRIVATE
 # #########################################
 target_link_libraries(supergoonHandlerExe
         PUBLIC
-        ${CURSES_LIBRARIES}
 )
 
 target_include_directories(supergoonHandlerExe
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
-        ${CURSES_INCLUDE_DIR}
 )
-

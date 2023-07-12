@@ -1,24 +1,11 @@
 #include <stdio.h>
-#ifdef GN_PLATFORM_MACOS
-#include <ncurses.h>
-#else
-#include <ncurses/ncurses.h>
-#endif
 #include <stdlib.h>
 #include <character.h>
 
 void curses_base(Character* charmander)
 {
-    initscr();
-    addstr("-----------------\n| Supergoon Bot |\n| v0.1.0        |\n-----------------\n\n");
-    printw("-----------------\n Health: %d\n Mana: %d \n-----------------\n\n", charmander->Health, charmander->Mana);
-    refresh();
-    addstr("\npress any key to exit...");
-    refresh();
 
-    getch();
-
-    endwin();
+    printf("-----------------\n Health: %d\n Mana: %d \n-----------------\n\n", charmander->Health, charmander->Mana);
 }
 
 int main()
