@@ -63,12 +63,14 @@ int main()
 {
     const char *processName = "Game.exe";
     DWORD processId = FindProcessIdByName(processName);
+    int health = 0;
+    Character *mainBoi = NewCharacter(health);
 
     if (processId != 0)
     {
         // Define the address and size of the memory you want to read
         LPCVOID address = (LPCVOID)0x056B0490;
-        SIZE_T size = 2048;
+        SIZE_T size = 2;
 
         // Allocate a buffer to store the read memory
         LPVOID buffer = malloc(size);
@@ -77,10 +79,17 @@ int main()
         {
             // Memory read successfully, you can access the buffer data
             // Example: Print the first 10 bytes
-            for (int i = 0; i < 10; i++)
-            {
-                printf("%02X ", ((unsigned char *)buffer)[i]);
-            }
+            // for (int i = 0; i < 2; i++)
+            // {
+            //     printf("%02X ", ((unsigned char *)buffer)[i]);
+            // }
+            // Memory read successfully, convert bytes to integer
+            unsigned char *byteBuffer = (unsigned char *)buffer;
+
+            // Assuming the two bytes represent a little-endian value
+            health = (int)((byteBuffer[1] << 8) | byteBuffer[0]);
+            mainBoi->Health = health;
+            printf("Health: %d\n", mainBoi->Health);
         }
         else
         {
@@ -94,8 +103,5 @@ int main()
         printf("Process not found.\n");
     }
 
-    Character *mainBoi = NewCharacter();
-
-    curses_base(mainBoi);
     return EXIT_SUCCESS;
 }

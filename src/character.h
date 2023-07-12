@@ -11,4 +11,4 @@ typedef struct Character
  *
  * @return Character* Pointer to a character.
  */
-Character* NewCharacter();
+Character *NewCharacter(int health);
