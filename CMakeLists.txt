@@ -51,7 +51,7 @@ endif(UNIX AND NOT APPLE)
 # #########################################
 # Options
 # #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 
 # #########################################
 # For Debug, print aout all variables.
