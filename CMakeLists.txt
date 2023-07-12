@@ -118,14 +118,11 @@ target_compile_options(supergoonHandlerExe PRIVATE
 target_link_libraries(supergoonHandlerExe
         PUBLIC
         ${CURSES_LIBRARIES}
-
-        PRIVATE
 )
 
 target_include_directories(supergoonHandlerExe
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${CURSES_INCLUDE_DIR}
-        PRIVATE
 )
 

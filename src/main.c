@@ -1,5 +1,9 @@
 #include <stdio.h>
+#ifdef GN_PLATFORM_MACOS
+#include <ncurses.h>
+#else
 #include <ncurses/ncurses.h>
+#endif
 #include <stdlib.h>
 #include <character.h>
 
