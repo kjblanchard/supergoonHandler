@@ -64,7 +64,7 @@ int main()
     const char *processName = "Game.exe";
     DWORD processId = FindProcessIdByName(processName);
     int health = 0;
-    Character *mainBoi = NewCharacter(health);
+    Character *mainBoi = NewCharacter();
 
     if (processId != 0)
     {
