@@ -1,2 +1,2 @@
-int InitCurses();
+int InitCurses(int* health);
 int DrawScreenLoop();

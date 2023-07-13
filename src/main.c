@@ -14,6 +14,6 @@ int main()
     Character *mainBoi = NewCharacter();
     mainBoi->Health = GetHealth(settings->offsets.health);
     printf("Character\nHealth: %d\n", mainBoi->Health);
-    int success = InitCurses();
+    int success = InitCurses(mainBoi->Health);
     return EXIT_SUCCESS;
 }

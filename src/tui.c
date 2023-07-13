@@ -4,7 +4,7 @@
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
-int InitCurses()
+int InitCurses(int* health)
 {
     WINDOW *my_win;
     int startx, starty, width, height;
@@ -20,6 +20,7 @@ int InitCurses()
     starty = (LINES - height) / 2; /* Calculating for a center placement */
     startx = (COLS - width) / 2;   /* of the window		*/
     printw("Press F1 to exit");
+    printw("Health: %d\n ", health);
     refresh();
     my_win = create_newwin(height, width, starty, startx);
 

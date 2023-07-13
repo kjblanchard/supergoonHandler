@@ -1,8 +1,8 @@
-
+# #########################################
+# Initial config
+# #########################################
 cmake_minimum_required(VERSION 3.16)
 message(STATUS "Starting Goon Bot configuration")
-
-# Set things
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -22,12 +22,18 @@ message(STATUS "Changing the platform specific settings")
 if(APPLE)
         # MACOS
         if(NOT IOS)
+                set(MACOS ON)
+                list(FILTER FILES EXCLUDE REGEX ".*platform/Windows.*$")
         endif(NOT IOS)
 endif(APPLE)
 
 if(WIN32)
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
 endif(WIN32)
+
+if(UNIX AND NOT APPLE)
+        set(LINUX ON)
+endif(UNIX AND NOT APPLE)
 
 # #########################################
 # Initialize
@@ -45,38 +51,37 @@ add_executable(supergoonHandlerExe
 set_property(TARGET supergoonHandlerExe PROPERTY C_STANDARD 99)
 find_package(PkgConfig)
 
-if(UNIX AND NOT APPLE)
-        set(LINUX ON)
-endif(UNIX AND NOT APPLE)
-
 # #########################################
 # Packages
 # #########################################
-find_package(Curses
-        REQUIRED
-)
+if(WIN32)
+        find_library(LIB_PDCURSES
+                NAMES pdcurses.a
+                HINTS C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/wincon
+                REQUIRED)
+        set(CURSES_INCLUDE_DIR C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/)
+        set(LUA_INCLUDE_DIR /usr/local/include/)
+else()
+        find_package(Curses
+                REQUIRED
+        )
+        set(LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
+endif(WIN32)
 
-# Find lua static (non homebrew)
+# Find lua static (non homebrew on mac)
 find_library(LIB_LUA
         NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
         HINTS /usr/local/lib
         REQUIRED)
-find_library(LIB_PDCURSES
-        NAMES pdcurses.a
-        HINTS C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/wincon
-        REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
-set(WINDOWS_CURSES_INCLUDE_DIR C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/)
-set(MAC_LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
-set(WINDOWS_LUA_INCLUDE_DIR /usr/local/include/)
 
 # #########################################
 # Options
 # #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 
 # #########################################
-# For Debug, print aout all variables.
+# Debug
 # #########################################
 if(CMAKE_DEBUG_VARIABLES)
         message(STATUS "Exporting debug")
@@ -88,29 +93,11 @@ if(CMAKE_DEBUG_VARIABLES)
         endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
-# find_library(LIB_VORBIS
-# REQUIRED
-# PATH_SUFFIXES .a
-# NAMES libvorbis vorbis vorbis.a vorbis.dll libvorbis.a
-# HINTS /usr/local/lib /c/cmake/lib)
-
 # #########################################
 # Compile Definitions
 # #########################################
 target_compile_definitions(supergoonHandlerExe PRIVATE)
 
-if(GOON_BUILD_ENGINE)
-        target_compile_definitions(supergoonHandlerExe PRIVATE
-
-                # -DGN_BUILD_DLL # Builds the full project
-                # -DGN_ENABLE_ASSERTS # Enables asserts
-        )
-endif(GOON_BUILD_ENGINE)
-
-# target_compile_definitions(goonEngine PRIVATE
-# -DGL_SILENCE_DEPRECATION
-# -DIMGUI_IMPL_OPENGL_LOADER_GLAD # Used since we use glad?
-# )
 if(APPLE)
         target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_MACOS)
 elseif(WIN32)
@@ -144,21 +131,13 @@ target_include_directories(supergoonHandlerExe
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${CURSES_INCLUDE_DIR}
-        ${MAC_LUA_INCLUDE_DIR}
-        ${WINDOWS_LUA_INCLUDE_DIR}
-        ${WINDOWS_CURSES_INCLUDE_DIR}
-        /c/cmake
-        C:/cmake
-        # C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9
+        ${LUA_INCLUDE_DIR}
 )
 
 # #########################################
 # Install
 # #########################################
-
-# MACOS SPECIFIC CURRENTLY FOR MONO, this likely should be done differently, as a install target, or something.  Read the docs.
 set(FOLDERS_TO_COPY ./scripts)
-# Copy mono lib folder over, this is needed for embedding mono
 install(DIRECTORY ${FOLDERS_TO_COPY}
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMPONENT scripts)
+)
