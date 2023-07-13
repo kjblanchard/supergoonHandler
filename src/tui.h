@@ -1,0 +1,2 @@
+int InitCurses();
+int DrawScreenLoop();

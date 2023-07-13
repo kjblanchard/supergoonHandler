@@ -1,6 +1,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 message(STATUS "Starting Goon Bot configuration")
+
 # Set things
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -32,14 +33,15 @@ endif(WIN32)
 # Initialize
 # #########################################
 message(STATUS "Initializing the project")
+
 # This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(FindPkgConfig)
 project(supergoonHandler
-    VERSION 0.1.0
-    LANGUAGES C)
+        VERSION 0.1.0
+        LANGUAGES C)
 add_executable(supergoonHandlerExe
-    ${FILES})
+        ${FILES})
 set_property(TARGET supergoonHandlerExe PROPERTY C_STANDARD 99)
 find_package(PkgConfig)
 
@@ -47,12 +49,25 @@ if(UNIX AND NOT APPLE)
         set(LINUX ON)
 endif(UNIX AND NOT APPLE)
 
+# #########################################
+# Packages
+# #########################################
+find_package(Curses
+        REQUIRED
+)
+
+# Find lua static (non homebrew)
+find_library(LIB_LUA
+        NAMES liblua_static lua_static liblua_static.a lua_static.a
+        HINTS /usr/local/lib
+        REQUIRED)
+set(LUA_LIBRARIES ${LIB_LUA})
+set(MAC_LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
 
 # #########################################
 # Options
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
-
 
 # #########################################
 # For Debug, print aout all variables.
@@ -68,10 +83,10 @@ if(CMAKE_DEBUG_VARIABLES)
 endif(CMAKE_DEBUG_VARIABLES)
 
 # find_library(LIB_VORBIS
-#     REQUIRED
-#     PATH_SUFFIXES .a
-#     NAMES libvorbis vorbis vorbis.a vorbis.dll libvorbis.a
-#     HINTS /usr/local/lib /c/cmake/lib)
+# REQUIRED
+# PATH_SUFFIXES .a
+# NAMES libvorbis vorbis vorbis.a vorbis.dll libvorbis.a
+# HINTS /usr/local/lib /c/cmake/lib)
 
 # #########################################
 # Compile Definitions
@@ -87,10 +102,9 @@ if(GOON_BUILD_ENGINE)
 endif(GOON_BUILD_ENGINE)
 
 # target_compile_definitions(goonEngine PRIVATE
-#         -DGL_SILENCE_DEPRECATION
-#         -DIMGUI_IMPL_OPENGL_LOADER_GLAD # Used since we use glad?
+# -DGL_SILENCE_DEPRECATION
+# -DIMGUI_IMPL_OPENGL_LOADER_GLAD # Used since we use glad?
 # )
-
 if(APPLE)
         target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_MACOS)
 elseif(WIN32)
@@ -103,12 +117,12 @@ endif(APPLE)
 # Compile Options
 # #########################################
 target_compile_options(supergoonHandlerExe PRIVATE
-       -std=c99
+        -std=c99
         -Wall
         -Wextra
         -Wpedantic
         -Wdeprecated
-        -Wextra-semi
+        -Wno-newline-eof
 )
 
 # #########################################
@@ -116,9 +130,24 @@ target_compile_options(supergoonHandlerExe PRIVATE
 # #########################################
 target_link_libraries(supergoonHandlerExe
         PUBLIC
+        ${CURSES_LIBRARIES}
+        ${LUA_LIBRARIES}
 )
 
 target_include_directories(supergoonHandlerExe
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        ${CURSES_INCLUDE_DIR}
+        ${MAC_LUA_INCLUDE_DIR}
 )
+
+# #########################################
+# Install
+# #########################################
+
+# MACOS SPECIFIC CURRENTLY FOR MONO, this likely should be done differently, as a install target, or something.  Read the docs.
+set(FOLDERS_TO_COPY ./scripts)
+# Copy mono lib folder over, this is needed for embedding mono
+install(DIRECTORY ${FOLDERS_TO_COPY}
+        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMPONENT scripts)

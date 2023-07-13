@@ -43,3 +43,4 @@ update_doc.sh
 doc/
 imgui.ini
 Testing/
+.vscode/
