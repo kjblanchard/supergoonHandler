@@ -11,11 +11,9 @@ int main()
 {
 
     Settings *settings = CreateSettings();
-#ifdef GN_PLATFORM_MACOS
-    int success = InitCurses();
-#endif
     Character *mainBoi = NewCharacter();
+    mainBoi->Health = GetHealth(settings->offsets.health);
     printf("Character\nHealth: %d\n", mainBoi->Health);
-    GetHealth(settings->offsets.health);
+    int success = InitCurses();
     return EXIT_SUCCESS;
 }

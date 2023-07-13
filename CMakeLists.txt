@@ -58,11 +58,17 @@ find_package(Curses
 
 # Find lua static (non homebrew)
 find_library(LIB_LUA
-        NAMES liblua_static lua_static liblua_static.a lua_static.a
+        NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
         HINTS /usr/local/lib
         REQUIRED)
+find_library(LIB_PDCURSES
+        NAMES pdcurses.a
+        HINTS C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/wincon
+        REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
+set(WINDOWS_CURSES_INCLUDE_DIR C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/)
 set(MAC_LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
+set(WINDOWS_LUA_INCLUDE_DIR /usr/local/include/)
 
 # #########################################
 # Options
@@ -139,6 +145,11 @@ target_include_directories(supergoonHandlerExe
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${CURSES_INCLUDE_DIR}
         ${MAC_LUA_INCLUDE_DIR}
+        ${WINDOWS_LUA_INCLUDE_DIR}
+        ${WINDOWS_CURSES_INCLUDE_DIR}
+        /c/cmake
+        C:/cmake
+        # C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9
 )
 
 # #########################################
