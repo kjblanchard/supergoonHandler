@@ -55,11 +55,13 @@ find_package(PkgConfig)
 # Packages
 # #########################################
 if(WIN32)
+message(STATUS "Windows")
         find_library(LIB_PDCURSES
                 NAMES pdcurses.a
                 HINTS C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/wincon
                 REQUIRED)
         set(CURSES_INCLUDE_DIR C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/)
+        set(CURSES_LIBRARIES ${LIB_PDCURSES})
         set(LUA_INCLUDE_DIR /usr/local/include/)
 else()
         find_package(Curses
@@ -132,6 +134,9 @@ target_include_directories(supergoonHandlerExe
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${CURSES_INCLUDE_DIR}
         ${LUA_INCLUDE_DIR}
+        /usr/local/include/
+        /c/
+        C:/cmake/
 )
 
 # #########################################
