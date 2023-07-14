@@ -19,8 +19,8 @@ int InitCurses(int* health)
     width = 10;
     starty = (LINES - height) / 2; /* Calculating for a center placement */
     startx = (COLS - width) / 2;   /* of the window		*/
-    printw("Press F1 to exit");
-    printw("Health: %d\n ", health);
+    printw("Press F1 to exit\n");
+    printw("---------------\n|Health: %d|\n---------------", health);
     refresh();
     my_win = create_newwin(height, width, starty, startx);
 
@@ -47,8 +47,14 @@ int InitCurses(int* health)
         }
     }
 
+    // endwin(); /* End curses mode		  */
+    return 0;
+}
+int EndCurses()
+{
     endwin(); /* End curses mode		  */
     return 0;
+
 }
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {
