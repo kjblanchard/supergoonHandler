@@ -15,10 +15,6 @@ int main()
     mainBoi->Health = GetHealth(settings->offsets.health);
     printf("Character\nHealth: %d\n", mainBoi->Health);
     int success = InitCurses(mainBoi->Health);
-    while(true)
-    {
-        mainBoi->Health = GetHealth(settings->offsets.health);
-    }
     EndCurses();
     return EXIT_SUCCESS;
 }
