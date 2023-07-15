@@ -1,3 +1,5 @@
+#pragma once
+#include <stdint.h>
 /**
  * @brief Represents a character class In diablo memory space
  *

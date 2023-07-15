@@ -8,11 +8,11 @@
  * @copyright Copyright (c) 2023
  *
  */
-typedef struct Character Character;
+struct Character;
 
 /**
  * @brief Updates a character based on its in game memory
  *
  * @param character The character to update
  */
-void RefreshCharacterInfo(Character* character);
+void RefreshCharacterInfo(struct Character* character);

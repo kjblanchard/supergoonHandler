@@ -1,12 +1,19 @@
 #include <stddef.h>
 
-int GetHealth(int offset) {
+int CloseHandle(int offset)
+{
     return 1;
 }
-int InitializeData() {
+int InitializeData()
+{
     return 0;
 }
-unsigned long FindNestedValue(int baseAddress, const unsigned long *offsets, size_t offsetCount)
+
+int FindNestedValue(int baseAddress, const unsigned long *offsets, size_t offsetCount)
+{
+    return 0;
+}
+int GetData(int memoryLocation, int sizeBytes, void *buffer)
 {
     return 0;
 }

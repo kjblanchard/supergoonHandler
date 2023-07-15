@@ -3,68 +3,65 @@
 
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
+static WINDOW *charWindow;
 
-int InitCurses(int* health)
+int InitCurses(int *health)
 {
-    WINDOW *my_win;
-    int startx, starty, width, height;
-    int ch;
-
     initscr();            /* Start curses mode 		*/
     cbreak();             /* Line buffering disabled, Pass on
                            * everty thing to me 		*/
     keypad(stdscr, TRUE); /* I need that nifty F1 	*/
 
-    height = 3;
-    width = 10;
+    printw("Press F1 to exit\n");
+    // Updates every second
+    timeout(1000);
+    int startx, starty, width, height;
+    height = 10;
+    width = 20;
     starty = (LINES - height) / 2; /* Calculating for a center placement */
     startx = (COLS - width) / 2;   /* of the window		*/
-    printw("Press F1 to exit\n");
-    printw("---------------\n|Health: %d|\n---------------", health);
+    charWindow = create_newwin(height, width, starty, startx);
     refresh();
-    my_win = create_newwin(height, width, starty, startx);
-
-    while ((ch = getch()) != KEY_F(1))
-    {
-        switch (ch)
-        {
-        case KEY_LEFT:
-            destroy_win(my_win);
-            my_win = create_newwin(height, width, starty, --startx);
-            break;
-        case KEY_RIGHT:
-            destroy_win(my_win);
-            my_win = create_newwin(height, width, starty, ++startx);
-            break;
-        case KEY_UP:
-            destroy_win(my_win);
-            my_win = create_newwin(height, width, --starty, startx);
-            break;
-        case KEY_DOWN:
-            destroy_win(my_win);
-            my_win = create_newwin(height, width, ++starty, startx);
-            break;
-        }
-    }
-
-    // endwin(); /* End curses mode		  */
     return 0;
 }
+int UpdateCharacterWindow(Character *character)
+{
+    int ch;
+    int x = 5;
+    int y = 3;
+    wclear(charWindow);
+    box(charWindow, 0, 0);
+    mvwprintw(charWindow, y, x, "Health: %d", character->Health);
+    ++y;
+    mvwprintw(charWindow, y, x, "Mana: %d", character->Mana);
+    ++y;
+    mvwprintw(charWindow, y, x, "Stamina: %d", character->Stamina);
+    ++y;
+    mvwprintw(charWindow, y, x, "Gold: %d", character->Gold);
+    ++y;
+    wmove(charWindow, y, x);
+    wrefresh(charWindow);
+    ch = getch();
+    if (ch == KEY_F(1))
+    {
+        return 0;
+    }
+    return 1;
+}
+
 int EndCurses()
 {
-    endwin(); /* End curses mode		  */
+    endwin();
     return 0;
-
 }
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {
     WINDOW *local_win;
-
     local_win = newwin(height, width, starty, startx);
-    box(local_win, 0, 0); /* 0, 0 gives default characters
-                           * for the vertical and horizontal
-                           * lines			*/
-    wrefresh(local_win);  /* Show that box 		*/
+    // box(local_win, 0, 0); /* 0, 0 gives default characters
+    //                        * for the vertical and horizontal
+    //                        * lines			*/
+    // wrefresh(local_win);  /* Show that box 		*/
 
     return local_win;
 }
