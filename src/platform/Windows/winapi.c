@@ -2,46 +2,72 @@
 #include <tlhelp32.h>
 #include <stdio.h>
 
+#pragma region FORWARDS
 static DWORD FindProcessIdByName(const char *processName);
 static BOOL ReadProcessMemoryByName(const char *processName, LPCVOID address, LPVOID buffer, SIZE_T size);
+static DWORD_PTR FindNestedValue(DWORD_PTR baseAddress, const DWORD_PTR *offsets, size_t offsetCount);
+#pragma endregion
+#pragma region GLOBALS
+static DWORD g_processId;
+static HANDLE g_processHandle;
+#pragma endregion
 
-int GetHealth(int offset)
+int InitializeData()
 {
-    const char* processName = "Game.exe";
+    const char *processName = "Game.exe";
     DWORD processId = FindProcessIdByName(processName);
 
-    if (processId != 0)
+    if (processId == 0)
     {
-        // Define the address and size of the memory you want to read
-        // Used to be a 0x boi
-        LPCVOID address = (LPCVOID)offset;
-        SIZE_T size = 2;
-
-        // Allocate a buffer to store the read memory
-        LPVOID buffer = malloc(size);
-
-        if (ReadProcessMemoryByName(processName, address, buffer, size))
-        {
-            // Memory read successfully, convert bytes to integer
-            unsigned char *byteBuffer = (unsigned char *)buffer;
-
-            // Little Endian - Windows
-            int health = (int)((byteBuffer[1] << 8) | byteBuffer[0]);
-            return health;
-        }
-        else
-        {
-            printf("Failed to read process memory.\n");
-            return 0;
-        }
-
-        free(buffer);
+        g_processId = NULL;
+        return 1;
     }
-    else
+    g_processId = processId;
+    HANDLE processHandle = OpenProcess(PROCESS_VM_READ, FALSE, processId);
+
+    if (processHandle == NULL)
     {
-        printf("Process not found.\n");
+        g_processHandle = NULL;
+        return 1;
     }
+    g_processHandle = processHandle;
     return 0;
+}
+
+int CloseHandle()
+{
+    CloseHandle(g_processHandle);
+}
+
+int long FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
+{
+    DWORD_PTR address = baseAddress;
+    for (size_t i = 0; i < offsetCount; i++)
+    {
+        ReadProcessMemory(processHandle, (LPCVOID)address, &address, sizeof(DWORD_PTR), NULL);
+        address += offsets[i];
+    }
+    return address;
+}
+
+
+int GetData(int memoryLocation, int sizeBytes, void *buffer)
+{
+    return ReadProcessMemory(g_processId, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL)
+}
+
+/**
+ * @brief Converts two bytes to int from a buffer.
+ * @param buffer
+ * @return int
+ */
+static int ConvertBytesToInt(void *buffer)
+{
+    // Memory read successfully, convert bytes to integer
+    unsigned char *byteBuffer = (unsigned char *)buffer;
+    // Little Endian - Windows
+    int health = (int)((byteBuffer[1] << 8) | byteBuffer[0]);
+    return health;
 }
 
 static DWORD FindProcessIdByName(const char *processName)
@@ -70,25 +96,4 @@ static DWORD FindProcessIdByName(const char *processName)
     }
 
     return processId;
-}
-
-static BOOL ReadProcessMemoryByName(const char *processName, LPCVOID address, LPVOID buffer, SIZE_T size)
-{
-    DWORD processId = FindProcessIdByName(processName);
-
-    if (processId != 0)
-    {
-        HANDLE processHandle = OpenProcess(PROCESS_VM_READ, FALSE, processId);
-
-        if (processHandle != NULL)
-        {
-            BOOL success = ReadProcessMemory(processHandle, address, buffer, size, NULL);
-
-            CloseHandle(processHandle);
-
-            return success;
-        }
-    }
-
-    return FALSE;
 }

@@ -6,4 +6,7 @@
 #include <platform/Windows/winapi.h>
 #endif
 
-extern int GetHealth(int offset);
+extern int InitializeData();
+extern int CloseHandle();
+extern int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount);
+extern int GetData(int memoryLocation, int sizeBytes, void *buffer);

@@ -13,7 +13,8 @@ int main()
     Settings *settings = CreateSettings();
     Character *mainBoi = NewCharacter();
     mainBoi->Health = GetHealth(settings->offsets.health);
-    printf("Character\nHealth: %d\n", mainBoi->Health);
+
+    // Curses
     int success = InitCurses(mainBoi->Health);
     EndCurses();
     return EXIT_SUCCESS;
