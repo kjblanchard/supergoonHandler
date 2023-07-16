@@ -12,7 +12,7 @@ void RefreshCharacterInfo(Character *character)
     const unsigned long offsets[] = {490};
     size_t offsetCount = 1;
 
-    int charAddress = FindNestedValue(base, offsets, offsetCount);
+    int charAddress = FindNestedAddress(base, offsets, offsetCount);
     if (charAddress)
     {
         g_characterLocation = charAddress;

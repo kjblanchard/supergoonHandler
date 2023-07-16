@@ -16,6 +16,7 @@ static int Init()
     InitializeDebugLogFile();
     settings = CreateSettings();
     mainBoi = NewCharacter();
+    InitializeData();
 }
 
 static int Close()
@@ -39,6 +40,7 @@ int main()
 {
     Init();
     int success = InitCurses(mainBoi->Health);
+
 
     while (Loop(mainBoi))
     {

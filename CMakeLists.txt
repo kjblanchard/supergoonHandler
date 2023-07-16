@@ -29,6 +29,7 @@ endif(APPLE)
 
 if(WIN32)
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
+        list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
 endif(WIN32)
 
 if(UNIX AND NOT APPLE)

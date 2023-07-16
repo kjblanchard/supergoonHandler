@@ -5,7 +5,6 @@
 #pragma region FORWARDS
 static DWORD FindProcessIdByName(const char *processName);
 static BOOL ReadProcessMemoryByName(const char *processName, LPCVOID address, LPVOID buffer, SIZE_T size);
-static DWORD_PTR FindNestedValue(DWORD_PTR baseAddress, const DWORD_PTR *offsets, size_t offsetCount);
 #pragma endregion
 #pragma region GLOBALS
 static DWORD g_processId;
@@ -28,24 +27,29 @@ int InitializeData()
     if (processHandle == NULL)
     {
         g_processHandle = NULL;
+        printf("Failed to get handle, error: %d", GetLastError());
         return 1;
     }
     g_processHandle = processHandle;
+    printf("Process handle is %d", g_processHandle);
     return 0;
 }
 
-int CloseHandle()
+int CloseGoonHandle()
 {
     CloseHandle(g_processHandle);
 }
 
-int long FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
+int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
 {
     DWORD_PTR address = baseAddress;
     for (size_t i = 0; i < offsetCount; i++)
     {
-        ReadProcessMemory(processHandle, (LPCVOID)address, &address, sizeof(DWORD_PTR), NULL);
-        address += offsets[i];
+        DWORD_PTR newAddress;
+        ReadProcessMemory(g_processHandle, (LPCVOID)address, &newAddress, sizeof(DWORD_PTR), NULL);
+        printf("The address is %x, new address is %x, and offset is %d\n", address, newAddress, offsets[i]);
+        address = newAddress + offsets[i];
+        printf("Offset address is %x\n", address);
     }
     return address;
 }
@@ -53,7 +57,13 @@ int long FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t
 
 int GetData(int memoryLocation, int sizeBytes, void *buffer)
 {
-    return ReadProcessMemory(g_processId, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL)
+
+    int result = ReadProcessMemory(g_processHandle, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL);
+    if(result == 0)
+    {
+        printf("Problem with reading memory location %x, size of %d, %d \n", memoryLocation, sizeBytes, GetLastError());
+    }
+    return;
 }
 
 /**

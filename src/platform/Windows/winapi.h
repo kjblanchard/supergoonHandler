@@ -8,9 +8,10 @@
  * @copyright Copyright (c) 2023
  *
  */
+#pragma once
 #include <stddef.h>
 
 int InitializeData();
-int CloseHandle();
+int CloseGoonHandle();
 int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount);
 int GetData(int memoryLocation, int sizeBytes, void *buffer);
