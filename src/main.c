@@ -11,38 +11,65 @@ const char *processName = "Game.exe";
 static Settings *settings;
 static Character *mainBoi;
 
-static int Init()
-{
-    InitializeDebugLogFile();
-    settings = CreateSettings();
-    mainBoi = NewCharacter();
-}
+// static int Init()
+// {
+//     InitializeDebugLogFile();
+//     settings = CreateSettings();
+//     mainBoi = NewCharacter();
+// }
 
-static int Close()
-{
-    EndCurses();
-    CloseDebugLogFile();
-    return EXIT_SUCCESS;
-}
+// static int Close()
+// {
+//     EndCurses();
+//     CloseDebugLogFile();
+//     return EXIT_SUCCESS;
+// }
 
-static int Loop(Character *character)
+// static int Loop(Character *character)
+// {
+//     RefreshCharacterInfo(mainBoi);
+//     if (UpdateCharacterWindow(character))
+//     {
+//         return 1;
+//     }
+//     return 0;
+// }
+
+// int main()
+// {
+//     Init();
+//     int success = InitCurses(mainBoi->Health);
+
+//     while (Loop(mainBoi))
+//     {
+
+//     }
+//     return Close();
+// }
+
+#include <stdio.h>
+#include <Windows.h>
+
+int main(int argc, char* argv[])
 {
-    RefreshCharacterInfo(mainBoi);
-    if (UpdateCharacterWindow(character))
+    if (argc != 2)
     {
+        printf("Usage: program_name <Process ID>\n");
         return 1;
     }
-    return 0;
-}
 
-int main()
-{
-    Init();
-    int success = InitCurses(mainBoi->Health);
+    DWORD processId = atoi(argv[1]);
 
-    while (Loop(mainBoi))
+    HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processId);
+    if (processHandle == NULL)
     {
-
+        printf("Failed to open the process.\n");
+        return 1;
     }
-    return Close();
+
+    printf("Process Handle: %p\n", processHandle);
+
+    CloseHandle(processHandle);
+
+    return 0;
 }
