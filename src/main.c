@@ -16,7 +16,9 @@ static int Init()
     InitializeDebugLogFile();
     settings = CreateSettings();
     mainBoi = NewCharacter();
+    puts("Here man");
     InitializeData();
+    puts("After!");
 }
 
 static int Close()

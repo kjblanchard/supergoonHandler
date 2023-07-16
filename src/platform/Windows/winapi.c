@@ -17,10 +17,13 @@ int InitializeData()
 {
     const char *processName = "Game.exe";
     DWORD processId;
+    processId = FindProcessIdByName(processName);
+    // processId = 0x4774;
 
     if (processId == 0)
     {
         g_processId = NULL;
+        printf("No process name!\n");
         return 1;
     }
     g_processId = processId;
@@ -28,20 +31,22 @@ int InitializeData()
     baseAddr = GetModuleBaseAddress(processId, processName);
     if(baseAddr == 0)
     {
-        printf("Borked getting base address");
+        printf("Borked getting base address\n");
         g_baseAddr = NULL;
         return 1;
     }
+    printf("Base address is %d", baseAddr);
+
     HANDLE processHandle = OpenProcess(PROCESS_VM_READ, FALSE, processId);
 
     if (processHandle == NULL)
     {
         g_processHandle = NULL;
-        printf("Failed to get handle, error: %d", GetLastError());
+        printf("Failed to get handle, error: %d using process id %d\n", GetLastError(), processId);
         return 1;
     }
     g_processHandle = processHandle;
-    printf("Process handle is %d", g_processHandle);
+    printf("Process ID is %x Process handle is %d\n",g_processId, g_processHandle);
     return 0;
 }
 
@@ -52,13 +57,21 @@ int CloseGoonHandle()
 
 int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
 {
-    DWORD_PTR address = baseAddress;
+    // DWORD_PTR address = baseAddress;
+    // Add in the base address found in x64dbg to the nested value, should do this for everything probably.
+    // DWORD_PTR address = 0x00400000 + baseAddress;
+    DWORD_PTR address = 0x400000+ 0x004842A8;
+    printf("Base address I should read memory from is %x", address);
+
     for (size_t i = 0; i < offsetCount; i++)
     {
-        DWORD_PTR newAddress;
-        ReadProcessMemory(g_processHandle, (LPCVOID)address, &newAddress, sizeof(DWORD_PTR), NULL);
-        printf("The address is %x, new address is %x, and offset is %d\n", address, newAddress, offsets[i]);
-        address = newAddress + offsets[i];
+        int result = ReadProcessMemory(g_processHandle, (LPCVOID)address, &address, sizeof(DWORD_PTR), NULL);
+        if(result == 0)
+        {
+            printf("Problem, %d", GetLastError());
+        }
+        printf("Value I just read is %x\n", address);
+        address += offsets[i];
         printf("Offset address is %x\n", address);
     }
     return address;
@@ -119,6 +132,7 @@ static DWORD FindProcessIdByName(const char *processName)
 
 static DWORD_PTR GetModuleBaseAddress(DWORD processId, const char *moduleName)
 {
+    // HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE , processId);
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
     if (snapshot != INVALID_HANDLE_VALUE)
     {

@@ -25,7 +25,8 @@ void RefreshCharacterInfo(Character *character)
         return;
     }
 
-    if (g_characterLocation && !GetData(g_characterLocation, sizeof(*character), character))
+    // if (g_characterLocation && !GetData(g_characterLocation, sizeof(*character), character))
+    if (g_characterLocation && !GetData(0x05640490, sizeof(*character), character))
     {
         LogWarn("Could not update character!");
     }
