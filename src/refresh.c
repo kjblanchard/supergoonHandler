@@ -9,7 +9,7 @@ static int g_characterLocation = 0;
 void RefreshCharacterInfo(Character *character)
 {
     int base = 0x004842A8;
-    const unsigned long offsets[] = {490};
+    const unsigned long offsets[] = {0x490};
     size_t offsetCount = 1;
 
     int charAddress = FindNestedAddress(base, offsets, offsetCount);
@@ -25,8 +25,8 @@ void RefreshCharacterInfo(Character *character)
         return;
     }
 
-    // if (g_characterLocation && !GetData(g_characterLocation, sizeof(*character), character))
-    if (g_characterLocation && !GetData(0x05640490, sizeof(*character), character))
+    if (g_characterLocation && !GetData(g_characterLocation, sizeof(*character), character))
+    // if (g_characterLocation && !GetData(0x05640490, sizeof(*character), character))
     {
         LogWarn("Could not update character!");
     }
