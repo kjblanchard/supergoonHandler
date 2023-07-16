@@ -3,8 +3,9 @@
 #include <stdio.h>
 
 #pragma region FORWARDS
-static DWORD FindProcessIdByName(const char *processName);
+// static DWORD FindProcessIdByName(const char *processName);
 static BOOL ReadProcessMemoryByName(const char *processName, LPCVOID address, LPVOID buffer, SIZE_T size);
+static DWORD_PTR GetModuleBaseAddress(const char* moduleName, DWORD* processId);
 #pragma endregion
 #pragma region GLOBALS
 static DWORD g_processId;
@@ -14,7 +15,9 @@ static HANDLE g_processHandle;
 int InitializeData()
 {
     const char *processName = "Game.exe";
-    DWORD processId = FindProcessIdByName(processName);
+    DWORD processId
+    DWORD_PTR baseAddr;
+    baseAddr = FindProcessIdByName(processName, *processId);
 
     if (processId == 0)
     {
@@ -80,30 +83,57 @@ static int ConvertBytesToInt(void *buffer)
     return health;
 }
 
-static DWORD FindProcessIdByName(const char *processName)
-{
-    DWORD processId = 0;
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+// static DWORD FindProcessIdByName(const char *processName)
+// {
+//     DWORD processId = 0;
+//     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
+//     if (snapshot != INVALID_HANDLE_VALUE)
+//     {
+//         PROCESSENTRY32 processEntry;
+//         processEntry.dwSize = sizeof(PROCESSENTRY32);
+
+//         if (Process32First(snapshot, &processEntry))
+//         {
+//             do
+//             {
+//                 if (strcmp(processEntry.szExeFile, processName) == 0)
+//                 {
+//                     processId = processEntry.th32ProcessID;
+//                     break;
+//                 }
+//             } while (Process32Next(snapshot, &processEntry));
+//         }
+
+//         CloseHandle(snapshot);
+//     }
+
+//     return processId;
+// }
+
+static DWORD_PTR GetModuleBaseAddress(const char* moduleName, DWORD* processId)
+{
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, *processId);
     if (snapshot != INVALID_HANDLE_VALUE)
     {
-        PROCESSENTRY32 processEntry;
-        processEntry.dwSize = sizeof(PROCESSENTRY32);
+        MODULEENTRY32 moduleEntry;
+        moduleEntry.dwSize = sizeof(MODULEENTRY32);
 
-        if (Process32First(snapshot, &processEntry))
+        if (Module32First(snapshot, &moduleEntry))
         {
             do
             {
-                if (strcmp(processEntry.szExeFile, processName) == 0)
+                if (strcmp(moduleEntry.szModule, moduleName) == 0)
                 {
-                    processId = processEntry.th32ProcessID;
-                    break;
+                    CloseHandle(snapshot);
+                    *processId = moduleEntry.th32ProcessID;
+                    return (DWORD_PTR)moduleEntry.modBaseAddr;
                 }
-            } while (Process32Next(snapshot, &processEntry));
+            } while (Module32Next(snapshot, &moduleEntry));
         }
 
         CloseHandle(snapshot);
     }
 
-    return processId;
+    return 0;
 }
