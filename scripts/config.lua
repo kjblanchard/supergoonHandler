@@ -10,6 +10,9 @@ Settings = {
         "C:\\carrot.bmp"
     },
     offsets = {
-        health = 0x056B0490
+        character = {
+            base = 0x004842A8,
+            offsets = { 0x490 }
+        }
     }
 }

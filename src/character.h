@@ -1,3 +1,13 @@
+/**
+ * @file character.h
+ * @author Kevin Blanchard (blanchardkevinj@gmail.com)
+ * @brief A character data structure that represents character data in diablo II LOD SP.
+ * @version 0.1
+ * @date 2023-07-14
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
 #include <stdint.h>
 /**
@@ -18,3 +28,10 @@ typedef struct Character
  * @return Character* Pointer to a character.
  */
 Character *NewCharacter();
+/**
+ * @brief Refreshes a caracters data from in game memory
+ *
+ * @param character The character to update
+ * @return int 0 if success
+ */
+int RefreshCharacter(Character* character);

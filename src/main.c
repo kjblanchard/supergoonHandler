@@ -4,10 +4,8 @@
 #include <debug.h>
 #include <tui.h>
 #include <settings.h>
-#include <refresh.h>
 #include <platform/gn_system.h>
 
-const char *processName = "Game.exe";
 static Settings *settings;
 static Character *mainBoi;
 
@@ -16,9 +14,7 @@ static int Init()
     InitializeDebugLogFile();
     settings = CreateSettings();
     mainBoi = NewCharacter();
-    puts("Here man");
     InitializeData();
-    puts("After!");
 }
 
 static int Close()
@@ -30,7 +26,7 @@ static int Close()
 
 static int Loop(Character *character)
 {
-    RefreshCharacterInfo(mainBoi);
+    RefreshCharacter(mainBoi);
     if (UpdateCharacterWindow(character))
     {
         return 1;
