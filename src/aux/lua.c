@@ -7,6 +7,9 @@ int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modify
         // stack now contains: -1 => value; -2 => key; -3 => table
         // copy the key so that lua_tostring does not modify the original
         lua_pushvalue(L, -2);
+        const char* key = lua_tostring(L, -1);
+        const char* value = lua_tostring(L, -2);
+        printf("Key is %s Value is %s", key, value);
         // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
         int funcResult = func(L, modifyThing);
         // pop value + copy of key, leaving original key
