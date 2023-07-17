@@ -13,13 +13,14 @@ static int Init()
 {
     InitializeDebugLogFile();
     settings = CreateSettings();
-    InitializeData();
+    InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
 }
 
 static int Close()
 {
     EndCurses();
+    CloseMemoryReader();
     CloseDebugLogFile();
     return EXIT_SUCCESS;
 }

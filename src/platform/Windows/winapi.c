@@ -13,7 +13,7 @@ static DWORD_PTR g_baseAddr;
 static HANDLE g_processHandle;
 #pragma endregion
 
-int InitializeData()
+int InitializeMemoryReader()
 {
     const char *processName = "Game.exe";
     DWORD processId;
@@ -50,7 +50,7 @@ int InitializeData()
     return 0;
 }
 
-int CloseGoonHandle()
+int CloseMemoryReader()
 {
     CloseHandle(g_processHandle);
 }
@@ -77,7 +77,7 @@ int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offs
     return address;
 }
 
-int GetData(int memoryLocation, int sizeBytes, void *buffer)
+int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer)
 {
 
     int result = ReadProcessMemory(g_processHandle, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL);

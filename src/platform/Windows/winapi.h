@@ -11,7 +11,7 @@
 #pragma once
 #include <stddef.h>
 
-int InitializeData();
-int CloseGoonHandle();
+int InitializeMemoryReader();
+int CloseMemoryReader();
 int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount);
-int GetData(int memoryLocation, int sizeBytes, void *buffer);
+int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer);

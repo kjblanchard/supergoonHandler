@@ -28,7 +28,7 @@ Character *NewCharacter(Settings *settings)
 
 int RefreshCharacter(Character *character)
 {
-    if (g_characterLocation && !GetData(g_characterLocation, sizeof(*character), character))
+    if (g_characterLocation && !GetValueAtLocation(g_characterLocation, sizeof(*character), character))
     {
         LogWarn("Could not update character!");
         return 1;

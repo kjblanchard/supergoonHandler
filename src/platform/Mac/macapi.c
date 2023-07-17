@@ -1,10 +1,10 @@
 #include <stddef.h>
 
-int CloseHandle(int offset)
+int CloseMemoryReader(int offset)
 {
     return 1;
 }
-int InitializeData()
+int InitializeMemoryReader()
 {
     return 0;
 }
@@ -13,7 +13,7 @@ int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offs
 {
     return 0;
 }
-int GetData(int memoryLocation, int sizeBytes, void *buffer)
+int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer)
 {
     return 0;
 }
