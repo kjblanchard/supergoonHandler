@@ -13,8 +13,8 @@ static int Init()
 {
     InitializeDebugLogFile();
     settings = CreateSettings();
-    mainBoi = NewCharacter(settings);
     InitializeData();
+    mainBoi = NewCharacter(settings);
 }
 
 static int Close()
