@@ -25,14 +25,15 @@ typedef struct Character
 } Character;
 /**
  * @brief Creates a new Character with base information
+ * @param settings The bot settings to set offsets with.
  *
  * @return Character* Pointer to a character.
  */
-Character *NewCharacter();
+Character *NewCharacter(Settings* settings);
 /**
  * @brief Refreshes a caracters data from in game memory
  *
  * @param character The character to update
  * @return int 0 if success
  */
-int RefreshCharacter(Character* character, Settings* settings);
+int RefreshCharacter(Character* character);

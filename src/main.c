@@ -13,7 +13,7 @@ static int Init()
 {
     InitializeDebugLogFile();
     settings = CreateSettings();
-    mainBoi = NewCharacter();
+    mainBoi = NewCharacter(settings);
     InitializeData();
 }
 
@@ -26,7 +26,7 @@ static int Close()
 
 static int Loop(Character *character)
 {
-    RefreshCharacter(mainBoi, settings);
+    RefreshCharacter(mainBoi);
     if (UpdateCharacterWindow(character))
     {
         return 1;
