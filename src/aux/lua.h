@@ -11,4 +11,5 @@
  * @return int
  */
 int LuaForEachTable(lua_State *L, int(*func)(lua_State *, void *), void* modifyThing);
+int LuaLoadFile(lua_State* L, const char* file);
 
