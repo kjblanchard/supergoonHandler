@@ -30,44 +30,24 @@ Settings *CreateSettings()
         return NULL;
     }
     lua_getglobal(L, "Settings");
-    lua_pushstring(L, "resolution");
-    lua_gettable(L, -2);
-    lua_pushstring(L, "width");
-    lua_gettable(L, -2);
+    // -1 is now resolution table
+    lua_getfield(L, -1, "resolution");
+    // lua_pushstring(L, "resolution");
+    // lua_gettable(L, -2);
+    // lua_pushstring(L, "width");
+    // lua_gettable(L, -2);
+    lua_getfield(L, -1, "width");
     settings->resolution.width = (int)lua_tonumber(L, -1);
     lua_pop(L, 1);
-    printf("Width is: %d\n", settings->resolution.width);
     lua_pushstring(L, "height");
     lua_gettable(L, -2);
     settings->resolution.height = (int)lua_tonumber(L, -1);
-    printf("Height is: %d\n", settings->resolution.height);
     // Pop off the height, resolution
     lua_pop(L, 2);
 
     lua_pushstring(L, "images");
-    // Settings->Images
     lua_gettable(L, -2);
     LuaForEachTable(L, SetImages, settings);
-    // // Settings->Images->Nil, we use nil as the first key to traverse.
-    // lua_pushnil(L);
-    // int iter = 0;
-    // // Uses table on -2 (images) and pushes key and value onto the top of the stack
-    // while (lua_next(L, -2))
-    // {
-    //     // stack now contains: -1 => value; -2 => key; -3 => table
-    //     // copy the key so that lua_tostring does not modify the original
-    //     lua_pushvalue(L, -2);
-    //     // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
-    //     const char *key = lua_tostring(L, -1);
-    //     const char *value = lua_tostring(L, -2);
-    //     settings->images.images[iter] = strdup(value);
-    //     iter++;
-    //     // pop value + copy of key, leaving original key
-    //     lua_pop(L, 2);
-    //     // stack now contains: -1 => key; -2 => table
-    // }
-    // lua_pop(L, 1);
-
     lua_pushstring(L, "memoryLocations");
     lua_gettable(L, -2);
     lua_pushstring(L, "character");

@@ -11,3 +11,4 @@
  * @return int
  */
 int LuaForEachTable(lua_State *L, int(*func)(lua_State *, void *), void* modifyThing);
+
