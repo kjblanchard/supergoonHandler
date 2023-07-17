@@ -1,9 +1,8 @@
 #include <settings.h>
 #include <stdlib.h>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
 #include <string.h>
+#include <aux/lua.h>
+static int DoTheThing(lua_State* L, void *thing);
 
 int InitializeLua(lua_State *state)
 {
@@ -15,7 +14,7 @@ Settings *CreateSettings()
 {
     Settings *settings = malloc(sizeof(*settings));
     settings->images.count = 3;
-    settings->images.images = calloc(settings->images.count, sizeof(char*));
+    settings->images.images = calloc(settings->images.count, sizeof(char *));
     int result = 0;
     lua_State *L = luaL_newstate();
     InitializeLua(L);
@@ -83,15 +82,25 @@ Settings *CreateSettings()
     settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
     settings->characterMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
     // Character Get offsets.
-    lua_pushnil(L);
-    for (size_t i = 0; i < settings->characterMemoryLocation.offsetCount; i++)
-    {
-        lua_next(L, -2);
-        lua_pushvalue(L, -2);
-        settings->characterMemoryLocation.offsets[i] = lua_tointeger(L, -2);
-        lua_pop(L, 2);
-    }
-    lua_pop(L, 2);
+    // lua_pushnil(L);
+    // for (size_t i = 0; i < settings->characterMemoryLocation.offsetCount; i++)
+    // {
+    //     lua_next(L, -2);
+    //     lua_pushvalue(L, -2);
+    //     settings->characterMemoryLocation.offsets[i] = lua_tointeger(L, -2);
+    //     lua_pop(L, 2);
+    // }
+    LuaForEachTable(L, DoTheThing, settings);
     lua_pop(L, 3);
     return settings;
+}
+
+static int DoTheThing(lua_State* L, void *thing)
+{
+    Settings *settings = (Settings *)thing;
+    if (!settings)
+        return 1;
+    int i = lua_tointeger(L, -1);
+    int offset = lua_tointeger(L, -2);
+    settings->characterMemoryLocation.offsets[i] = offset;
 }
