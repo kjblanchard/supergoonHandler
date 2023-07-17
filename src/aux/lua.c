@@ -17,7 +17,7 @@ int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modify
             break;
         }
     }
-    lua_pop(L, 1);
+    // lua_pop(L, 1);
     // Stack now contains the initial table that was put on the stack
     return 0;
 }

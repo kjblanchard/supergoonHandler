@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <aux/lua.h>
-static int DoTheThing(lua_State *L, void *thing);
+static int SetCharacterOffsets(lua_State *L, void *thing);
 static int SetImages(lua_State *L, void *thing);
 
 int InitializeLua(lua_State *state)
@@ -30,37 +30,28 @@ Settings *CreateSettings()
         return NULL;
     }
     lua_getglobal(L, "Settings");
-    // -1 is now resolution table
     lua_getfield(L, -1, "resolution");
-    // lua_pushstring(L, "resolution");
-    // lua_gettable(L, -2);
-    // lua_pushstring(L, "width");
-    // lua_gettable(L, -2);
     lua_getfield(L, -1, "width");
-    settings->resolution.width = (int)lua_tonumber(L, -1);
+    settings->resolution.width = lua_tointeger(L, -1);
     lua_pop(L, 1);
     lua_pushstring(L, "height");
     lua_gettable(L, -2);
-    settings->resolution.height = (int)lua_tonumber(L, -1);
-    // Pop off the height, resolution
+    settings->resolution.height = lua_tointeger(L, -1);
     lua_pop(L, 2);
-
-    lua_pushstring(L, "images");
-    lua_gettable(L, -2);
+    lua_getfield(L, -1, "images");
     LuaForEachTable(L, SetImages, settings);
-    lua_pushstring(L, "memoryLocations");
-    lua_gettable(L, -2);
-    lua_pushstring(L, "character");
-    lua_gettable(L, -2);
-    lua_pushstring(L, "base");
+    lua_pop(L, 1);
+    lua_getfield(L, -1, "memoryLocations");
+    lua_getfield(L, -1, "character");
+    lua_getfield(L, -1, "base");
     settings->characterMemoryLocation.base = (int)lua_tonumber(L, -1);
     lua_pop(L, 1);
-    lua_pushstring(L, "offsets");
-    lua_gettable(L, -2);
+    lua_getfield(L, -1, "offsets");
     settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
     settings->characterMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
-    LuaForEachTable(L, DoTheThing, settings);
-    lua_pop(L, 3);
+    LuaForEachTable(L, SetCharacterOffsets, settings);
+    // offsets, character, memorylocations, Settings
+    lua_pop(L, 4);
     return settings;
 }
 static int SetImages(lua_State *L, void *thing)
@@ -73,7 +64,7 @@ static int SetImages(lua_State *L, void *thing)
     settings->images.images[i] = strdup(value);
 }
 
-static int DoTheThing(lua_State *L, void *thing)
+static int SetCharacterOffsets(lua_State *L, void *thing)
 {
     Settings *settings = (Settings *)thing;
     if (!settings)
