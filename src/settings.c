@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <aux/lua.h>
-static int DoTheThing(lua_State* L, void *thing);
+static int DoTheThing(lua_State *L, void *thing);
+static int SetImages(lua_State *L, void *thing);
 
 int InitializeLua(lua_State *state)
 {
@@ -46,30 +47,27 @@ Settings *CreateSettings()
     lua_pushstring(L, "images");
     // Settings->Images
     lua_gettable(L, -2);
-    // Settings->Images->Nil, we use nil as the first key to traverse.
-    lua_pushnil(L);
-    int iter = 0;
-    // Uses table on -2 (images) and pushes key and value onto the top of the stack
-    while (lua_next(L, -2))
-    {
-        // stack now contains: -1 => value; -2 => key; -3 => table
-        // copy the key so that lua_tostring does not modify the original
-        lua_pushvalue(L, -2);
-        // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
-        const char *key = lua_tostring(L, -1);
-        const char *value = lua_tostring(L, -2);
-        settings->images.images[iter] = strdup(value);
-        iter++;
-        // pop value + copy of key, leaving original key
-        lua_pop(L, 2);
-        // stack now contains: -1 => key; -2 => table
-    }
-    lua_pop(L, 1);
+    LuaForEachTable(L, SetImages, settings);
+    // // Settings->Images->Nil, we use nil as the first key to traverse.
+    // lua_pushnil(L);
+    // int iter = 0;
+    // // Uses table on -2 (images) and pushes key and value onto the top of the stack
+    // while (lua_next(L, -2))
+    // {
+    //     // stack now contains: -1 => value; -2 => key; -3 => table
+    //     // copy the key so that lua_tostring does not modify the original
+    //     lua_pushvalue(L, -2);
+    //     // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
+    //     const char *key = lua_tostring(L, -1);
+    //     const char *value = lua_tostring(L, -2);
+    //     settings->images.images[iter] = strdup(value);
+    //     iter++;
+    //     // pop value + copy of key, leaving original key
+    //     lua_pop(L, 2);
+    //     // stack now contains: -1 => key; -2 => table
+    // }
+    // lua_pop(L, 1);
 
-    for (size_t i = 0; i < (size_t)settings->images.count; i++)
-    {
-        printf("Thing is %s\n", settings->images.images[i]);
-    }
     lua_pushstring(L, "memoryLocations");
     lua_gettable(L, -2);
     lua_pushstring(L, "character");
@@ -81,21 +79,21 @@ Settings *CreateSettings()
     lua_gettable(L, -2);
     settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
     settings->characterMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
-    // Character Get offsets.
-    // lua_pushnil(L);
-    // for (size_t i = 0; i < settings->characterMemoryLocation.offsetCount; i++)
-    // {
-    //     lua_next(L, -2);
-    //     lua_pushvalue(L, -2);
-    //     settings->characterMemoryLocation.offsets[i] = lua_tointeger(L, -2);
-    //     lua_pop(L, 2);
-    // }
     LuaForEachTable(L, DoTheThing, settings);
     lua_pop(L, 3);
     return settings;
 }
+static int SetImages(lua_State *L, void *thing)
+{
+    Settings *settings = (Settings *)thing;
+    if (!settings)
+        return 1;
+    int i = lua_tointeger(L, -1);
+    const char*  value = lua_tostring(L, -2);
+    settings->images.images[i] = strdup(value);
+}
 
-static int DoTheThing(lua_State* L, void *thing)
+static int DoTheThing(lua_State *L, void *thing)
 {
     Settings *settings = (Settings *)thing;
     if (!settings)
