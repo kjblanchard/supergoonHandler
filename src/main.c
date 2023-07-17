@@ -15,6 +15,7 @@ static int Init()
     settings = CreateSettings();
     InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
+    InitCurses();
 }
 
 static int Close()
@@ -38,7 +39,6 @@ static int Loop(Character *character)
 int main()
 {
     Init();
-    int success = InitCurses(mainBoi->Health);
 
 
     while (Loop(mainBoi))
