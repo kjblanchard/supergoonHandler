@@ -59,7 +59,7 @@ static int SetImages(lua_State *L, void *thing)
     Settings *settings = (Settings *)thing;
     if (!settings)
         return 1;
-    int i = lua_tointeger(L, -1);
+    int i = lua_tointeger(L, -1) -1;
     const char*  value = lua_tostring(L, -2);
     settings->images.images[i] = strdup(value);
 }
@@ -69,7 +69,7 @@ static int SetCharacterOffsets(lua_State *L, void *thing)
     Settings *settings = (Settings *)thing;
     if (!settings)
         return 1;
-    int i = lua_tointeger(L, -1);
+    int i = lua_tointeger(L, -1) -1;
     int offset = lua_tointeger(L, -2);
     settings->characterMemoryLocation.offsets[i] = offset;
 }
