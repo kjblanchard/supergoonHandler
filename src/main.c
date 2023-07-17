@@ -26,7 +26,7 @@ static int Close()
 
 static int Loop(Character *character)
 {
-    RefreshCharacter(mainBoi);
+    RefreshCharacter(mainBoi, settings);
     if (UpdateCharacterWindow(character))
     {
         return 1;

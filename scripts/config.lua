@@ -9,7 +9,7 @@ Settings = {
         "C:\\banana.bmp",
         "C:\\carrot.bmp"
     },
-    offsets = {
+    memoryLocations = {
         character = {
             base = 0x004842A8,
             offsets = { 0x490 }

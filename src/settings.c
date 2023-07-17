@@ -71,12 +71,27 @@ Settings *CreateSettings()
     {
         printf("Thing is %s\n", settings->images.images[i]);
     }
+    lua_pushstring(L, "memoryLocations");
+    lua_gettable(L, -2);
+    lua_pushstring(L, "character");
+    lua_gettable(L, -2);
+    lua_pushstring(L, "base");
+    settings->characterMemoryLocation.base = (int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
     lua_pushstring(L, "offsets");
     lua_gettable(L, -2);
-    lua_pushstring(L, "health");
-    lua_gettable(L, -2);
-    settings->offsets.health = (int)lua_tonumber(L, -1);
+    settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
+    settings->characterMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
+    // Character Get offsets.
+    lua_pushnil(L);
+    for (size_t i = 0; i < settings->characterMemoryLocation.offsetCount; i++)
+    {
+        lua_next(L, -2);
+        lua_pushvalue(L, -2);
+        settings->characterMemoryLocation.offsets[i] = lua_tointeger(L, -2);
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 2);
     lua_pop(L, 3);
-    printf("Health offset is %d", settings->offsets.health);
     return settings;
 }

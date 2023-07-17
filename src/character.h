@@ -10,6 +10,7 @@
  */
 #pragma once
 #include <stdint.h>
+#include <settings.h>
 /**
  * @brief Represents a character class In diablo memory space
  *
@@ -34,4 +35,4 @@ Character *NewCharacter();
  * @param character The character to update
  * @return int 0 if success
  */
-int RefreshCharacter(Character* character);
+int RefreshCharacter(Character* character, Settings* settings);

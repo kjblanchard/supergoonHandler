@@ -9,7 +9,7 @@ int InitializeData()
     return 0;
 }
 
-int FindNestedValue(int baseAddress, const unsigned long *offsets, size_t offsetCount)
+int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
 {
     return 0;
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <stdbool.h>
 
 typedef struct Resolution
@@ -15,16 +16,18 @@ typedef struct Images
 
 } Images;
 
-typedef struct Offsets {
-    int health;
+typedef struct MemoryLocation {
+    int base;
+    int offsetCount;
+    unsigned long* offsets;
 
-} Offsets;
+} MemoryLocation;
 
 typedef struct Settings
 {
     Resolution resolution;
     Images images;
-    Offsets offsets;
+    MemoryLocation characterMemoryLocation;
 
 } Settings;
 
