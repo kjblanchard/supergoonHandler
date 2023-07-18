@@ -9,17 +9,15 @@ int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modify
         // copy the key so that lua_tostring does not modify the original
         lua_pushvalue(L, -2);
         // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
-        int funcResult = func(L, modifyThing);
+        int shouldExit = func(L, modifyThing);
         // pop value + copy of key, leaving original key
         lua_pop(L, 2);
         // stack now contains: -1 => key; -2 => table
-        if (!funcResult)
+        if (shouldExit)
         {
             break;
         }
     }
-    // lua_pop(L, 1);
-    // Stack now contains the initial table that was put on the stack
     return 0;
 }
 
@@ -39,22 +37,22 @@ int LuaLoadFile(lua_State *L, const char *file)
 void DumpLuaStack (lua_State *state) {
   int top=lua_gettop(state);
   for (int i=1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(state,i));
+    LogWarn("%d\t%s\t", i, luaL_typename(state,i));
     switch (lua_type(state, i)) {
       case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(state,i));
+        LogWarn("%g",lua_tonumber(state,i));
         break;
       case LUA_TSTRING:
-        printf("%s\n",lua_tostring(state,i));
+        LogWarn("%s",lua_tostring(state,i));
         break;
       case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(state, i) ? "true" : "false"));
+        LogWarn("%s", (lua_toboolean(state, i) ? "true" : "false"));
         break;
       case LUA_TNIL:
-        printf("%s\n", "nil");
+        LogWarn("%s", "nil");
         break;
       default:
-        printf("%p\n",lua_topointer(state,i));
+        LogWarn("%p",lua_topointer(state,i));
         break;
     }
   }

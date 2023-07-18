@@ -39,13 +39,17 @@ Settings *CreateSettings()
     settings->images.count = lua_rawlen(L, -1);
     settings->images.images = calloc(settings->characterMemoryLocation.offsetCount, sizeof(char*));
     LuaForEachTable(L, SetImages, settings);
-    // -2 settings
+    // -1 settings
     lua_pop(L, 1);
+    // -1 memoryLocations -2 settings
     lua_getfield(L, -1, "memoryLocations");
+    // -1 character -2 memoryLocations -3 settings
     lua_getfield(L, -1, "character");
+    // -1 base -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "base");
     settings->characterMemoryLocation.base = lua_tointeger(L, -1);
     lua_pop(L, 1);
+    // -1 offsets -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "offsets");
     settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
     settings->characterMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
@@ -58,20 +62,20 @@ static int SetImages(lua_State *L, void *thing)
 {
     Settings *settings = (Settings *)thing;
     if (!settings)
-        return 1;
+        return true;
     int i = lua_tointeger(L, -1) -1;
     const char*  value = lua_tostring(L, -2);
     settings->images.images[i] = strdup(value);
-    return 0;
+    return false;
 }
 
 static int SetCharacterOffsets(lua_State *L, void *thing)
 {
     Settings *settings = (Settings *)thing;
     if (!settings)
-        return 1;
+        return true;
     int i = lua_tointeger(L, -1) -1;
     int offset = lua_tointeger(L, -2);
     settings->characterMemoryLocation.offsets[i] = offset;
-    return 0;
+    return false;
 }
