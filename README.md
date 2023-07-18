@@ -7,13 +7,6 @@
 - Cannot run in gitbash - PDcurses doesn't work
 - Cannot build in vscode - Get errors linking
 
-003c8a44
-34
-44
-60
-14
-2c
-0
 4bytes
 10c
 4r
