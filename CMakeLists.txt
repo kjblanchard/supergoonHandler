@@ -49,7 +49,8 @@ project(supergoonHandler
         LANGUAGES C)
 add_executable(supergoonHandlerExe
         ${FILES})
-set_property(TARGET supergoonHandlerExe PROPERTY C_STANDARD 99)
+# Using 11 instead of 99 for forward declaring typedef
+set_property(TARGET supergoonHandlerExe PROPERTY C_STANDARD 11)
 find_package(PkgConfig)
 
 # #########################################
@@ -82,6 +83,29 @@ set(LUA_LIBRARIES ${LIB_LUA})
 # Options
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
+option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
+
+# #########################################
+# Compile Definitions
+# #########################################
+target_compile_definitions(supergoonHandlerExe PRIVATE)
+
+if(APPLE)
+        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_MACOS)
+elseif(WIN32)
+        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_WINDOWS)
+elseif(LINUX)
+        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_LINUX)
+endif(APPLE)
+
+# #########################################
+# Precompiled headers
+# #########################################
+if(GOON_BUILD_PCH)
+        message(STATUS "Setting up PCH, mac needs objc")
+        target_precompile_headers(supergoonHandlerExe PRIVATE
+                "$<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_SOURCE_DIR}/src/gnpch.h>")
+endif(GOON_BUILD_PCH)
 
 # #########################################
 # Debug
@@ -96,18 +120,6 @@ if(CMAKE_DEBUG_VARIABLES)
         endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
-# #########################################
-# Compile Definitions
-# #########################################
-target_compile_definitions(supergoonHandlerExe PRIVATE)
-
-if(APPLE)
-        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_MACOS)
-elseif(WIN32)
-        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_WINDOWS)
-elseif(LINUX)
-        target_compile_definitions(supergoonHandlerExe PRIVATE -DGN_PLATFORM_LINUX)
-endif(APPLE)
 
 # #########################################
 # Compile Options

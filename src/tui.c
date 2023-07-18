@@ -5,7 +5,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 static WINDOW *charWindow;
 
-int InitCurses(int *health)
+int InitCurses()
 {
     initscr();            /* Start curses mode 		*/
     cbreak();             /* Line buffering disabled, Pass on

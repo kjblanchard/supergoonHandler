@@ -1,3 +1,4 @@
+#include <gnpch.h>
 #include <aux/lua.h>
 int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modifyThing)
 {
@@ -34,4 +35,27 @@ int LuaLoadFile(lua_State *L, const char *file)
         return 0;
     }
     return 1;
+}
+void DumpLuaStack (lua_State *state) {
+  int top=lua_gettop(state);
+  for (int i=1; i <= top; i++) {
+    printf("%d\t%s\t", i, luaL_typename(state,i));
+    switch (lua_type(state, i)) {
+      case LUA_TNUMBER:
+        printf("%g\n",lua_tonumber(state,i));
+        break;
+      case LUA_TSTRING:
+        printf("%s\n",lua_tostring(state,i));
+        break;
+      case LUA_TBOOLEAN:
+        printf("%s\n", (lua_toboolean(state, i) ? "true" : "false"));
+        break;
+      case LUA_TNIL:
+        printf("%s\n", "nil");
+        break;
+      default:
+        printf("%p\n",lua_topointer(state,i));
+        break;
+    }
+  }
 }
