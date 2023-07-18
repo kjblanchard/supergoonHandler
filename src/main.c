@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <gnpch.h>
 #include <character.h>
 #include <debug.h>
 #include <tui.h>
@@ -16,6 +15,7 @@ static int Init()
     InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
     InitCurses();
+    return 0;
 }
 
 static int Close()

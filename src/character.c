@@ -1,6 +1,5 @@
-#include <stdlib.h>
+#include <gnpch.h>
 #include <character.h>
-#include <debug.h>
 #include <platform/gn_system.h>
 
 static int g_characterLocation = 0;

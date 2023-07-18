@@ -1,6 +1,4 @@
-#include <windows.h>
-#include <tlhelp32.h>
-#include <stdio.h>
+#include <gnpch.h>
 
 #pragma region FORWARDS
 static DWORD FindProcessIdByName(const char *processName);

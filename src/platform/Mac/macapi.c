@@ -1,3 +1,4 @@
+#include <gnpch.h>
 #include <stddef.h>
 
 int CloseMemoryReader(int offset)

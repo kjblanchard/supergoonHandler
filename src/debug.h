@@ -13,6 +13,7 @@
  * @brief The level that we should show debug events at.
  *
  */
+#pragma once
 typedef enum LogLevel
 {
     Log_LDefault,
