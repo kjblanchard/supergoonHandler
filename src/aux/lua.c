@@ -1,7 +1,7 @@
 #include <gnpch.h>
 #include <aux/lua.h>
 
-int LuaForEachTable(lua_State *L, void (*func)(const char *, const char *, void *), void *modifyThing)
+int LuaForEachTable(lua_State *L, void (*func)(int, const char *, void *), void *modifyThing)
 {
   lua_pushnil(L);
   while (lua_next(L, -2))
@@ -10,7 +10,7 @@ int LuaForEachTable(lua_State *L, void (*func)(const char *, const char *, void 
     // copy the key so that lua_tostring does not modify the original
     lua_pushvalue(L, -2);
     // stack now contains: -1 => key; -2 => value; -3 => key; -4 => table
-    const char *key = lua_tostring(L, -1) - 1;
+    int key = lua_tointeger(L, -1) - 1;
     const char *value = lua_tostring(L, -2);
     func(key, value, modifyThing);
     // pop value + copy of key, leaving original key

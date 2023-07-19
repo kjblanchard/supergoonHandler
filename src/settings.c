@@ -14,27 +14,24 @@
 // -1 memoryLocations, -2 settings\
     lua_pop(L, 2);\
 
-static void SetImages(const char *key, const char *value, void *thing)
+static void SetImages(int key, const char *value, void *thing)
 {
     Settings *settings = (Settings *)thing;
-    int i = atoi(key);
-    settings->images.images[i] = strdup(value);
+    settings->images.images[key] = strdup(value);
 }
 
-static void SetCharacterOffsets(const char *key, const char *value, void *thing)
+static void SetCharacterOffsets(int key, const char *value, void *thing)
 {
     Settings *settings = (Settings *)thing;
-    int i = atoi(key);
     int val = atoi(value);
-    settings->characterMemoryLocation.offsets[i] = val;
+    settings->characterMemoryLocation.offsets[key] = val;
 }
 
-static void SetInventoryOffsets(const char *key, const char *value, void *thing)
+static void SetInventoryOffsets(int key, const char *value, void *thing)
 {
     Settings *settings = (Settings *)thing;
-    int i = atoi(key);
     int val = atoi(value);
-    settings->inventoryMemoryLocation.offsets[i] = val;
+    settings->inventoryMemoryLocation.offsets[key] = val;
 }
 
 
