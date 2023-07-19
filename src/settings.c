@@ -37,7 +37,7 @@ Settings *CreateSettings()
     // -1 images  -2 settings
     lua_getfield(L, -1, "images");
     settings->images.count = lua_rawlen(L, -1);
-    settings->images.images = calloc(settings->characterMemoryLocation.offsetCount, sizeof(char *));
+    settings->images.images = calloc(settings->images.count, sizeof(char *));
     LuaForEachTable(L, SetImages, settings);
     // -1 settings
     lua_pop(L, 1);
@@ -59,7 +59,7 @@ Settings *CreateSettings()
     // -1 offsets -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "offsets");
     settings->inventoryMemoryLocation.offsetCount = lua_rawlen(L, -1);
-    settings->inventoryMemoryLocation.offsets = calloc(settings->characterMemoryLocation.offsetCount, sizeof(int));
+    settings->inventoryMemoryLocation.offsets = calloc(settings->inventoryMemoryLocation.offsetCount, sizeof(int));
     // offsets, character, memorylocations, Settings
     LuaForEachTable(L, SetInventoryOffsets, settings);
     lua_settop(L, 0);

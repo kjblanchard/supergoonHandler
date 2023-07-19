@@ -7,11 +7,10 @@ static int g_inventoryLocation;
 Inventory *NewInventory(Settings *settings)
 {
     Inventory* inventory = malloc(sizeof(*inventory));
-    memset(inventory->Items, 0, sizeof(uint32_t));
+    memset(inventory->Items, 0, 40 * sizeof(uint32_t));
     for (size_t i = 0; i < settings->inventoryMemoryLocation.offsetCount; i++)
     {
-        LogWarn("Offset is %x", settings->inventoryMemoryLocation.offsets[i]);
-        /* code */
+        LogWarn("Inventory Offset is %x", settings->inventoryMemoryLocation.offsets[i]);
     }
 
     int inventoryAddress = FindNestedAddress(settings->inventoryMemoryLocation.offsets, settings->inventoryMemoryLocation.offsetCount);
