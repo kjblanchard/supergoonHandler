@@ -1,9 +1,42 @@
 #include <gnpch.h>
 #include <settings.h>
 #include <aux/lua.h>
-static int SetCharacterOffsets(lua_State *L, void *thing);
-static int SetImages(lua_State *L, void *thing);
-static int SetInventoryOffsets(lua_State *L, void *thing);
+
+// #define SET_SETTINGS_FROM_LUA(name, classname, function) \
+// -1 character -2 memoryLocations -3 settings\
+    lua_getfield(L, -1, name);\
+// -1 offsets -2 character -3 memoryLocations -4 settings\
+    lua_getfield(L, -1, "offsets");\
+    settings->classname.offsetCount = lua_rawlen(L, -1);\
+    settings->classname.offsets = calloc(settings->classname.offsetCount, sizeof(int));\
+// offsets, character, memorylocations, Settings\
+    LuaForEachTable(L, function, settings);\
+// -1 memoryLocations, -2 settings\
+    lua_pop(L, 2);\
+
+static void SetImages(const char *key, const char *value, void *thing)
+{
+    Settings *settings = (Settings *)thing;
+    int i = atoi(key);
+    settings->images.images[i] = strdup(value);
+}
+
+static void SetCharacterOffsets(const char *key, const char *value, void *thing)
+{
+    Settings *settings = (Settings *)thing;
+    int i = atoi(key);
+    int val = atoi(value);
+    settings->characterMemoryLocation.offsets[i] = val;
+}
+
+static void SetInventoryOffsets(const char *key, const char *value, void *thing)
+{
+    Settings *settings = (Settings *)thing;
+    int i = atoi(key);
+    int val = atoi(value);
+    settings->inventoryMemoryLocation.offsets[i] = val;
+}
+
 
 int InitializeLua(lua_State *state)
 {
@@ -43,6 +76,7 @@ Settings *CreateSettings()
     lua_pop(L, 1);
     // -1 memoryLocations -2 settings
     lua_getfield(L, -1, "memoryLocations");
+    // SET_SETTINGS_FROM_LUA("character", characterMemoryLocation, SetCharacterOffsets )
     // -1 character -2 memoryLocations -3 settings
     lua_getfield(L, -1, "character");
     // -1 offsets -2 character -3 memoryLocations -4 settings
@@ -55,7 +89,6 @@ Settings *CreateSettings()
     lua_pop(L, 2);
     // -1 inventory, -2 memoryLocations, -3 settings
     lua_getfield(L, -1, "inventory");
-
     // -1 offsets -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "offsets");
     settings->inventoryMemoryLocation.offsetCount = lua_rawlen(L, -1);
@@ -64,36 +97,4 @@ Settings *CreateSettings()
     LuaForEachTable(L, SetInventoryOffsets, settings);
     lua_settop(L, 0);
     return settings;
-}
-static int SetImages(lua_State *L, void *thing)
-{
-    Settings *settings = (Settings *)thing;
-    if (!settings)
-        return true;
-    int i = lua_tointeger(L, -1) - 1;
-    const char *value = lua_tostring(L, -2);
-    settings->images.images[i] = strdup(value);
-    return false;
-}
-
-static int SetCharacterOffsets(lua_State *L, void *thing)
-{
-    Settings *settings = (Settings *)thing;
-    if (!settings)
-        return true;
-    int i = lua_tointeger(L, -1) - 1;
-    int offset = lua_tointeger(L, -2);
-    settings->characterMemoryLocation.offsets[i] = offset;
-    return false;
-}
-
-static int SetInventoryOffsets(lua_State *L, void *thing)
-{
-    Settings *settings = (Settings *)thing;
-    if (!settings)
-        return true;
-    int i = lua_tointeger(L, -1) - 1;
-    int offset = lua_tointeger(L, -2);
-    settings->inventoryMemoryLocation.offsets[i] = offset;
-    return false;
 }

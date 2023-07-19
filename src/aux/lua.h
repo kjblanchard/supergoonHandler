@@ -7,6 +7,6 @@ typedef struct lua_State lua_State;
  * @param func
  * @return int
  */
-int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modifyThing);
+int LuaForEachTable(lua_State *L, void (*func)(const char*, const char* ,  void *), void *modifyThing);
 int LuaLoadFile(lua_State *L, const char *file);
 void DumpLuaStack (lua_State *state);

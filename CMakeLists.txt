@@ -135,6 +135,7 @@ target_compile_options(supergoonHandlerExe PRIVATE
         -Wextra
         -Wpedantic
         -Wdeprecated
+        -Wno-newline-eof
 )
 
 # #########################################

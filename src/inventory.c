@@ -12,11 +12,6 @@ Inventory *NewInventory(Settings *settings)
     {
         LogWarn("Inventory Offset is %x", settings->inventoryMemoryLocation.offsets[i]);
     }
-    int bro;
-    int what = GetValueAtLocation(0x05FA19D4, sizeof(DWORD_PTR), &bro);
-    LogWarn("Lookup address is %x", bro);
-
-
     int inventoryAddress = FindNestedAddress(settings->inventoryMemoryLocation.offsets, settings->inventoryMemoryLocation.offsetCount);
     if (inventoryAddress)
     {
