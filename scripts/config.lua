@@ -11,13 +11,10 @@ Settings = {
     },
     memoryLocations = {
         character = {
-            base = 0x004842A8,
-            offsets = { 0x490 }
+            offsets = { 0x004842A8, 0x490 }
         },
-
         inventory = {
-            base = 0x003C8A44,
-            offsets = { 0x34, 0x44, 0x60, 0x14, 0x2C, 0}
+            offsets = { 0x003C8A44, 0x34, 0x44, 0x60, 0x14, 0x2C, 0}
         }
     }
 }

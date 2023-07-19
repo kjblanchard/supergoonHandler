@@ -17,7 +17,6 @@ typedef struct Images
 } Images;
 
 typedef struct MemoryLocation {
-    int base;
     int offsetCount;
     unsigned long* offsets;
 

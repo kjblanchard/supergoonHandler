@@ -45,10 +45,6 @@ Settings *CreateSettings()
     lua_getfield(L, -1, "memoryLocations");
     // -1 character -2 memoryLocations -3 settings
     lua_getfield(L, -1, "character");
-    // -1 base -2 character -3 memoryLocations -4 settings
-    lua_getfield(L, -1, "base");
-    settings->characterMemoryLocation.base = lua_tointeger(L, -1);
-    lua_pop(L, 1);
     // -1 offsets -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "offsets");
     settings->characterMemoryLocation.offsetCount = lua_rawlen(L, -1);
@@ -59,10 +55,7 @@ Settings *CreateSettings()
     lua_pop(L, 2);
     // -1 inventory, -2 memoryLocations, -3 settings
     lua_getfield(L, -1, "inventory");
-    // -1 base,  -2 inventory, -3 memoryLocations, -4 settings
-    lua_getfield(L, -1, "base");
-    settings->inventoryMemoryLocation.base = lua_tointeger(L, -1);
-    lua_pop(L, 1);
+
     // -1 offsets -2 character -3 memoryLocations -4 settings
     lua_getfield(L, -1, "offsets");
     settings->inventoryMemoryLocation.offsetCount = lua_rawlen(L, -1);

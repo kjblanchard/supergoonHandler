@@ -12,7 +12,7 @@ Character *NewCharacter(Settings *settings)
     character->Mana = 0;
     character->Stamina = 0;
     character->BlankSpace = 0;
-    int charAddress = FindNestedAddress(settings->characterMemoryLocation.base, settings->characterMemoryLocation.offsets, settings->characterMemoryLocation.offsetCount);
+    int charAddress = FindNestedAddress(settings->characterMemoryLocation.offsets, settings->characterMemoryLocation.offsetCount);
     if (charAddress)
     {
         g_characterLocation = charAddress;
