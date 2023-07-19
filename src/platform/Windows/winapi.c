@@ -59,18 +59,18 @@ int FindNestedAddress(const unsigned long *offsets, size_t offsetCount)
     // Add in the base address found in x64dbg to the nested value, should do this for everything probably.
     DWORD_PTR address = 0x00400000 + offsets[0];
     // DWORD_PTR address = g_baseAddr+ baseAddress;
-    printf("Base address read is %x, cause the offset is %x\n", address, offsets[0]);
+    printf("Base address to read is %x, cause the offset is %x\n", address, offsets[0]);
     for (size_t i = 1; i < offsetCount; i++)
     {
+        printf("About to read %x\n", address);
 
         int result = ReadProcessMemory(g_processHandle, (LPCVOID)address, &address, sizeof(DWORD_PTR), NULL);
         if(result == 0)
         {
-            printf("Problem, %d", GetLastError());
+            printf("Problem reading address %x, Error: %x\n", address, GetLastError());
         }
         address += offsets[i];
-         LogDebug("Offset address is %x\n", address);
-        printf("Value I just read is %x\n", address);
+        LogWarn("Next address to read is %x\n", address);
     }
     return address;
 }
