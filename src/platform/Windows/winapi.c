@@ -3,11 +3,11 @@
 #pragma region FORWARDS
 static DWORD FindProcessIdByName(const char *processName);
 static BOOL ReadProcessMemoryByName(const char *processName, LPCVOID address, LPVOID buffer, SIZE_T size);
-static DWORD_PTR GetModuleBaseAddress(DWORD processId, const char *moduleName);
+static DWORD GetModuleBaseAddress(DWORD processId, const char *moduleName);
 #pragma endregion
 #pragma region GLOBALS
 static DWORD g_processId;
-static DWORD_PTR g_baseAddr;
+static DWORD g_baseAddr;
 static HANDLE g_processHandle;
 #pragma endregion
 
@@ -16,24 +16,22 @@ int InitializeMemoryReader()
     const char *processName = "Game.exe";
     DWORD processId;
     processId = FindProcessIdByName(processName);
-    // processId = 0x4774;
-
     if (processId == 0)
     {
         g_processId = NULL;
-        printf("No process name!\n");
-        return 1;
+        LogError("No process name!\n");
+        return false;
     }
     g_processId = processId;
-    DWORD_PTR baseAddr;
+    DWORD baseAddr;
     baseAddr = GetModuleBaseAddress(processId, processName);
     if(baseAddr == 0)
     {
-        printf("Borked getting base address\n");
+        LogError("Borked getting base address\n");
         g_baseAddr = NULL;
-        return 1;
+        return false;
     }
-    printf("Base address is %d", baseAddr);
+    g_baseAddr = baseAddr;
 
     HANDLE processHandle = OpenProcess(PROCESS_VM_READ, FALSE, processId);
 
@@ -41,11 +39,11 @@ int InitializeMemoryReader()
     {
         g_processHandle = NULL;
         printf("Failed to get handle, error: %d using process id %d\n", GetLastError(), processId);
-        return 1;
+        return false;
     }
     g_processHandle = processHandle;
     printf("Process ID is %x Process handle is %d\n",g_processId, g_processHandle);
-    return 0;
+    return true;
 }
 
 int CloseMemoryReader()
@@ -55,22 +53,16 @@ int CloseMemoryReader()
 
 int FindNestedAddress(const unsigned long *offsets, size_t offsetCount)
 {
-    // DWORD_PTR address = baseAddress;
     // Add in the base address found in x64dbg to the nested value, should do this for everything probably.
-    DWORD_PTR address = 0x00400000 + offsets[0];
-    // DWORD_PTR address = g_baseAddr+ baseAddress;
+    // DWORD address = 0x00400000 + offsets[0];
+    DWORD address = g_baseAddr + offsets[0];
     printf("Base address to read is %x, cause the offset is %x\n", address, offsets[0]);
     for (size_t i = 1; i < offsetCount; i++)
     {
-        printf("About to read %x\n", address);
-
-        int result = ReadProcessMemory(g_processHandle, (LPCVOID)address, &address, sizeof(DWORD_PTR), NULL);
-        if(result == 0)
-        {
-            printf("Problem reading address %x, Error: %x\n", address, GetLastError());
-        }
-        address += offsets[i];
-        LogWarn("Next address to read is %x\n", address);
+        DWORD_PTR newAddress;
+        GetValueAtLocation(address, sizeof(DWORD), &newAddress);
+        int offset = offsets[i];
+        address = newAddress + offset;
     }
     return address;
 }
@@ -81,9 +73,10 @@ int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer)
     int result = ReadProcessMemory(g_processHandle, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL);
     if (result == 0)
     {
-        printf("Problem with reading memory location %x, size of %d, %d \n", memoryLocation, sizeBytes, GetLastError());
+        LogWarn("Problem with reading memory location %x, size of %d, %lud", memoryLocation, sizeBytes, GetLastError());
+        return false;
     }
-    return;
+    return true;
 }
 
 /**
@@ -128,10 +121,10 @@ static DWORD FindProcessIdByName(const char *processName)
     return processId;
 }
 
-static DWORD_PTR GetModuleBaseAddress(DWORD processId, const char *moduleName)
+static DWORD GetModuleBaseAddress(DWORD processId, const char *moduleName)
 {
-    // HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE , processId);
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE , processId);
+    // HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, processId);
     if (snapshot != INVALID_HANDLE_VALUE)
     {
         MODULEENTRY32 moduleEntry;
@@ -144,7 +137,7 @@ static DWORD_PTR GetModuleBaseAddress(DWORD processId, const char *moduleName)
                 if (strcmp(moduleEntry.szModule, moduleName) == 0)
                 {
                     CloseHandle(snapshot);
-                    return (DWORD_PTR)moduleEntry.modBaseAddr;
+                    return (DWORD)moduleEntry.modBaseAddr;
                 }
             } while (Module32Next(snapshot, &moduleEntry));
         }

@@ -15,7 +15,7 @@ Settings = {
         },
         inventory = {
             offsets = { 0x003C8A44, 0x34, 0x44, 0x60, 0x14, 0x2C, 0}
-            -- offsets = { 0x05BA19D4, 0x2C, 0}
+            -- offsets = { 0x05BA19, 0x14, 0x2C, 0}
         }
     }
 }

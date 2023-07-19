@@ -61,7 +61,7 @@ include(CTest)
 # #########################################
 # Options
 # #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 set(BUILD_TESTING ON)
 
@@ -135,7 +135,6 @@ target_compile_options(supergoonHandlerExe PRIVATE
         -Wextra
         -Wpedantic
         -Wdeprecated
-        -Wno-newline-eof
 )
 
 # #########################################
