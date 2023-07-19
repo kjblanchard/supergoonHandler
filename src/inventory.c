@@ -12,6 +12,7 @@ Inventory *NewInventory(Settings *settings)
     if (inventoryAddress)
     {
         g_inventoryLocation = inventoryAddress;
+        LogWarn("Inventory address is %x", inventoryAddress);
     }
     else
     {
