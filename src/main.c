@@ -1,11 +1,13 @@
 #include <gnpch.h>
 #include <character.h>
+#include <inventory.h>
 #include <debug.h>
 #include <tui.h>
 #include <settings.h>
 #include <platform/gn_system.h>
 
 static Settings *settings;
+static Inventory* mainInventory;
 static Character *mainBoi;
 
 static int Init()
@@ -14,6 +16,7 @@ static int Init()
     settings = CreateSettings();
     InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
+    mainInventory = NewInventory(settings);
     InitCurses();
     return 0;
 }
@@ -29,6 +32,7 @@ static int Close()
 static int Loop(Character *character)
 {
     RefreshCharacter(mainBoi);
+    RefreshInventory(mainInventory);
     if (UpdateCharacterWindow(character))
     {
         return 1;

@@ -28,6 +28,7 @@ typedef struct Settings
     Resolution resolution;
     Images images;
     MemoryLocation characterMemoryLocation;
+    MemoryLocation inventoryMemoryLocation;
 
 } Settings;
 

@@ -49,6 +49,11 @@ int UpdateCharacterWindow(Character *character)
     return 1;
 }
 
+int UpdateInventoryWindow(Inventory *inventory)
+{
+
+}
+
 int EndCurses()
 {
     endwin();
