@@ -12,7 +12,7 @@ int InitCurses()
                            * everty thing to me 		*/
     keypad(stdscr, TRUE); /* I need that nifty F1 	*/
 
-    printw("Press F1 to exit\n");
+    printw("Supergoon Bot\nPress F1 to exit\n");
     // Updates every second
     timeout(1000);
     int startx, starty, width, height;
@@ -42,7 +42,7 @@ int UpdateCharacterWindow(Character *character)
     wmove(charWindow, y, x);
     wrefresh(charWindow);
     ch = getch();
-    if (ch == KEY_F(1))
+    if (ch == KEY_F(1) || ch == 'q')
     {
         return 0;
     }
