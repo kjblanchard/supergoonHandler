@@ -33,6 +33,7 @@ static int Loop(Character *character)
 {
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
+    UpdateInventoryWindow(mainInventory);
     if (UpdateCharacterWindow(character))
     {
         return 1;

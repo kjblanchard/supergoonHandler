@@ -11,13 +11,19 @@
 #pragma once
 #include <stdint.h>
 #include <settings.h>
+
+/**
+ * @brief The amount of total item slots in the game.
+ *
+ */
+#define INVENTORY_ITEM_SLOTS 40
 /**
  * @brief Inventory that holds all of the items in the game.
  *
  */
 typedef struct Inventory
 {
-    uint32_t Items[40];
+    uint32_t Items[INVENTORY_ITEM_SLOTS];
 
 } Inventory;
 /**
