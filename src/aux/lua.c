@@ -27,11 +27,11 @@ int LuaLoadFile(lua_State *L, const char *file)
   if (result != LUA_OK)
   {
     const char *error = lua_tostring(L, -1);
-    fprintf(stderr, "Could not load file, error result: %d\nerror: %s", result, error);
+    LogError("Could not load file, error result: %d, error: %s", result, error);
     lua_pop(L, 1);
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
 }
 void DumpLuaStack(lua_State *state)
 {

@@ -3,18 +3,18 @@
 
 int CloseMemoryReader(int offset)
 {
-    return 1;
+    return true;
 }
 int InitializeMemoryReader()
 {
-    return 0;
+    return true;
 }
 
 int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount)
 {
-    return 0;
+    return true;
 }
 int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer)
 {
-    return 0;
+    return true;
 }

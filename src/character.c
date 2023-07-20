@@ -12,20 +12,14 @@ Character *NewCharacter(Settings *settings)
     character->Mana = 0;
     character->Stamina = 0;
     character->BlankSpace = 0;
-    for (size_t i = 0; i < settings->characterMemoryLocation.offsetCount; i++)
-    {
-        LogWarn("Character Offset is %x", settings->characterMemoryLocation.offsets[i]);
-    }
     int charAddress = FindNestedAddress(settings->characterMemoryLocation.offsets, settings->characterMemoryLocation.offsetCount);
-    if (charAddress)
-    {
-        g_characterLocation = charAddress;
-    }
-    else
+    if (!charAddress)
     {
         g_characterLocation = 0;
         LogError("Could not determine proper address to get Character Info from!");
+        return NULL;
     }
+    g_characterLocation = charAddress;
     return character;
 }
 

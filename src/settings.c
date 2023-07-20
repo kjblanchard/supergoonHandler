@@ -2,6 +2,10 @@
 #include <settings.h>
 #include <aux/lua.h>
 
+#pragma region MACROS
+/**
+ * @brief Grabs all the offsets from a specific table inside of lua config.
+ */
 #define SET_SETTINGS_FROM_LUA(name, classname, function)                                \
     lua_getfield(L, -1, name);                                                          \
     lua_getfield(L, -1, "offsets");                                                     \
@@ -9,20 +13,22 @@
     settings->classname.offsets = calloc(settings->classname.offsetCount, sizeof(int)); \
     LuaForEachTable(L, function, settings);                                             \
     lua_pop(L, 2)
+/**
+ * @brief Creates a static function to grab offsets for something
+ * Name is the name of the function
+ * type is the type to get from settings
+ */
+#define CREATE_OFFSET_FUNC(name, type)                        \
+    static void name(int key, const char *value, void *thing) \
+    {                                                         \
+        Settings *settings = (Settings *)thing;               \
+        int val = atoi(value);                                \
+        settings->type.offsets[key] = val;                    \
+    }
 
-static void SetCharacterOffsets(int key, const char *value, void *thing)
-{
-    Settings *settings = (Settings *)thing;
-    int val = atoi(value);
-    settings->characterMemoryLocation.offsets[key] = val;
-}
-
-static void SetInventoryOffsets(int key, const char *value, void *thing)
-{
-    Settings *settings = (Settings *)thing;
-    int val = atoi(value);
-    settings->inventoryMemoryLocation.offsets[key] = val;
-}
+CREATE_OFFSET_FUNC(Set_Char, characterMemoryLocation)
+CREATE_OFFSET_FUNC(Set_Inv, inventoryMemoryLocation)
+#pragma endregion
 
 int InitializeLua(lua_State *state)
 {
@@ -44,8 +50,8 @@ Settings *CreateSettings()
     lua_getglobal(L, "Settings");
     // -1 memoryLocations -2 settings
     lua_getfield(L, -1, "memoryLocations");
-    SET_SETTINGS_FROM_LUA("character", characterMemoryLocation, SetCharacterOffsets);
-    SET_SETTINGS_FROM_LUA("inventory", inventoryMemoryLocation, SetInventoryOffsets);
+    SET_SETTINGS_FROM_LUA("character", characterMemoryLocation, Set_Char);
+    SET_SETTINGS_FROM_LUA("inventory", inventoryMemoryLocation, Set_Inv);
     lua_settop(L, 0);
     return settings;
 }

@@ -7,5 +7,12 @@ typedef struct lua_State lua_State;
  * @return int
  */
 int LuaForEachTable(lua_State *L, void (*func)(int, const char* ,  void *), void *modifyThing);
+/**
+ * @brief Loads a lua file, and makes sure it is good
+ *
+ * @param L The global lua state to load it into
+ * @param file The filename to load
+ * @return int True if file was loaded successfully
+ */
 int LuaLoadFile(lua_State *L, const char *file);
 void DumpLuaStack (lua_State *state);
