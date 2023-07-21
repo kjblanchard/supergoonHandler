@@ -1,23 +1,15 @@
+/**
+ * @file settings.h
+ * @author Kevin Blanchard (blanchardkevinj@gmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2023-07-15
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
-#include <stdbool.h>
-
-typedef struct Resolution
-{
-    int width;
-    int height;
-    bool fullscreen;
-
-} Resolution;
-
-typedef struct Images
-{
-    int count;
-    char **images;
-
-} Images;
-
 typedef struct MemoryLocation {
-    int base;
     int offsetCount;
     unsigned long* offsets;
 
@@ -25,9 +17,8 @@ typedef struct MemoryLocation {
 
 typedef struct Settings
 {
-    Resolution resolution;
-    Images images;
     MemoryLocation characterMemoryLocation;
+    MemoryLocation inventoryMemoryLocation;
 
 } Settings;
 

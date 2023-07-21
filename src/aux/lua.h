@@ -1,12 +1,18 @@
 #pragma once
 typedef struct lua_State lua_State;
 /**
- * @brief -1 on The stack is the key, -2 on the stack is the value -3 is original key, -4 is table
+ * @brief For lua tables that are simple arrays.  Do something for each one, passing i and value into the func
  *
- * @param L
  * @param func
  * @return int
  */
-int LuaForEachTable(lua_State *L, int (*func)(lua_State *, void *), void *modifyThing);
+int LuaForEachTable(lua_State *L, void (*func)(int, const char* ,  void *), void *modifyThing);
+/**
+ * @brief Loads a lua file, and makes sure it is good
+ *
+ * @param L The global lua state to load it into
+ * @param file The filename to load
+ * @return int True if file was loaded successfully
+ */
 int LuaLoadFile(lua_State *L, const char *file);
 void DumpLuaStack (lua_State *state);

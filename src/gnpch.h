@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include <lua.h>
 #include <lualib.h>

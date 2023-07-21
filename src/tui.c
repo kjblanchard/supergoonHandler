@@ -1,26 +1,47 @@
 #include <tui.h>
 #include <platform/gn_curses.h>
 
+struct Point
+{
+    int x;
+    int y;
+};
+
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 static WINDOW *charWindow;
+static WINDOW *invDisplayWindow;
+static struct Point invDisplayPoint;
 
-int InitCurses()
+InitCurses()
 {
     initscr();            /* Start curses mode 		*/
     cbreak();             /* Line buffering disabled, Pass on
                            * everty thing to me 		*/
     keypad(stdscr, TRUE); /* I need that nifty F1 	*/
 
-    printw("Press F1 to exit\n");
+    printw("Supergoon Bot\nPress F1 to exit\n");
     // Updates every second
     timeout(1000);
+    start_color();
+    init_pair(1, COLOR_YELLOW, COLOR_GREEN);
+    init_pair(2, COLOR_CYAN, COLOR_BLUE);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+    use_default_colors();
     int startx, starty, width, height;
     height = 10;
     width = 20;
     starty = (LINES - height) / 2; /* Calculating for a center placement */
     startx = (COLS - width) / 2;   /* of the window		*/
     charWindow = create_newwin(height, width, starty, startx);
+
+    height = 8;
+    width = 14;
+
+    invDisplayPoint.y = height + 10;
+    invDisplayPoint.x = width + 10;
+    invDisplayWindow = create_newwin(height, width, invDisplayPoint.y, invDisplayPoint.x);
     refresh();
     return 0;
 }
@@ -42,11 +63,47 @@ int UpdateCharacterWindow(Character *character)
     wmove(charWindow, y, x);
     wrefresh(charWindow);
     ch = getch();
-    if (ch == KEY_F(1))
+    if (ch == KEY_F(1) || ch == 'q')
     {
         return 0;
     }
     return 1;
+}
+
+int UpdateInventoryWindow(Inventory *inventory)
+{
+    wclear(invDisplayWindow);
+    int x = 2;
+    int y = 2;
+    wmove(invDisplayWindow, y, x);
+
+    // 40 is inventory slots, is static could be const?
+    for (size_t i = 0; i < INVENTORY_ITEM_SLOTS; i++)
+    {
+        if (inventory->Items[i])
+        {
+            wattron(invDisplayWindow, COLOR_PAIR(4));
+
+            waddch(invDisplayWindow, 'x');
+            wattroff(invDisplayWindow, COLOR_PAIR(4));
+        }
+        else
+        {
+            wattron(invDisplayWindow, COLOR_PAIR(3));
+            waddch(invDisplayWindow, 'o');
+            wattroff(invDisplayWindow, COLOR_PAIR(3));
+        }
+        ++x;
+        if (x > 11)
+        {
+            x = 2;
+            ++y;
+            wmove(invDisplayWindow, y, x);
+        }
+    }
+    box(invDisplayWindow, 0, 0);
+    mvprintw(invDisplayPoint.y, invDisplayPoint.x + 1, "Inventory");
+    wrefresh(invDisplayWindow);
 }
 
 int EndCurses()

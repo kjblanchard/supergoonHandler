@@ -22,12 +22,11 @@ extern int CloseMemoryReader();
 /**
  * @brief Finds a nested value based on a base pointer and it's offsets.
  *
- * @param baseAddress The base pointer address
  * @param offsets Array of offsets that will be used to follow
  * @param offsetCount The amount of offsets.
  * @return int The address at the end of the tunnel
  */
-extern int FindNestedAddress(int baseAddress, const unsigned long *offsets, size_t offsetCount);
+extern int FindNestedAddress(const unsigned long *offsets, size_t offsetCount);
 /**
  * @brief Get the Value At Location
  *

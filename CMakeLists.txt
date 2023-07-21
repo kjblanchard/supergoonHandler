@@ -29,6 +29,9 @@ endif(APPLE)
 
 if(WIN32)
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
+
+        # Disable testing until we install cppclean on windows builder.
+        set(GOON_ENABLE_TESTING OFF)
         list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
 endif(WIN32)
 
@@ -49,15 +52,24 @@ project(supergoonHandler
         LANGUAGES C)
 add_executable(supergoonHandlerExe
         ${FILES})
+
 # Using 11 instead of 99 for forward declaring typedef
 set_property(TARGET supergoonHandlerExe PROPERTY C_STANDARD 11)
 find_package(PkgConfig)
+include(CTest)
+
+# #########################################
+# Options
+# #########################################
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
+option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
+set(BUILD_TESTING ON)
 
 # #########################################
 # Packages
 # #########################################
 if(WIN32)
-message(STATUS "Windows")
+        message(STATUS "Windows")
         find_library(LIB_PDCURSES
                 NAMES pdcurses.a
                 HINTS C:/Users/blanc/Downloads/PDCurses-3.9/PDCurses-3.9/wincon
@@ -78,12 +90,6 @@ find_library(LIB_LUA
         HINTS /usr/local/lib
         REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
-
-# #########################################
-# Options
-# #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
-option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 
 # #########################################
 # Compile Definitions
@@ -119,7 +125,6 @@ if(CMAKE_DEBUG_VARIABLES)
                 message(STATUS "${_variableName}=${${_variableName}}")
         endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
-
 
 # #########################################
 # Compile Options
@@ -159,3 +164,13 @@ set(FOLDERS_TO_COPY ./scripts)
 install(DIRECTORY ${FOLDERS_TO_COPY}
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
+
+# #########################################
+# Test
+# #########################################
+if(BUILD_TESTING AND NOT WIN32)
+        message(STATUS "Enabling and starting tests")
+        enable_testing()
+endif(BUILD_TESTING AND NOT WIN32)
+
+add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
