@@ -7,8 +7,9 @@
 #include <platform/gn_system.h>
 
 static Settings *settings;
-static Inventory* mainInventory;
+static Inventory *mainInventory;
 static Character *mainBoi;
+static int bro;
 
 static int Init()
 {
@@ -18,6 +19,7 @@ static int Init()
     mainBoi = NewCharacter(settings);
     mainInventory = NewInventory(settings);
     InitCurses();
+    bro = 0;
     return 0;
 }
 
@@ -34,6 +36,11 @@ static int Loop(Character *character)
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
     UpdateInventoryWindow(mainInventory);
+    if(bro < 2)
+    {
+        ++bro;
+        SendMessageToMessageWindow("hello!!! From the boi here");
+    }
     if (UpdateCharacterWindow(character))
     {
         return 1;
@@ -44,11 +51,10 @@ static int Loop(Character *character)
 int main()
 {
     Init();
-
+    UpdateMessageWindow();
 
     while (Loop(mainBoi))
     {
-
     }
     return Close();
 }

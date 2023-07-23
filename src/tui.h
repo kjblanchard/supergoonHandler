@@ -5,5 +5,7 @@
 int InitCurses();
 int UpdateCharacterWindow(Character *character);
 int UpdateInventoryWindow(Inventory *inventory);
+int UpdateMessageWindow();
+void SendMessageToMessageWindow(const char* line);
 int EndCurses();
 int DrawScreenLoop();

@@ -1,3 +1,4 @@
+#include <gnpch.h>
 #include <tui.h>
 #include <platform/gn_curses.h>
 
@@ -10,8 +11,18 @@ struct Point
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 static WINDOW *charWindow;
+static struct Point charDisplayPoint;
 static WINDOW *invDisplayWindow;
 static struct Point invDisplayPoint;
+static WINDOW *messageWindow;
+static struct Point messageDisplayPoint;
+
+typedef char messageWindowMessage[150];
+static messageWindowMessage messageWindowMessages[20];
+// static char **messageWindowMessages;
+static int messageWindowMessagesLength;
+static size_t messageWindowMessageSize;
+static int messageWindowLastMessage;
 
 InitCurses()
 {
@@ -29,19 +40,28 @@ InitCurses()
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     init_pair(4, COLOR_RED, COLOR_BLACK);
     use_default_colors();
-    int startx, starty, width, height;
+
+    int width, height;
     height = 10;
     width = 20;
-    starty = (LINES - height) / 2; /* Calculating for a center placement */
-    startx = (COLS - width) / 2;   /* of the window		*/
-    charWindow = create_newwin(height, width, starty, startx);
+    charDisplayPoint.y = 2;
+    charDisplayPoint.x = (COLS - width) / 2;
+    charWindow = create_newwin(height, width, charDisplayPoint.y, charDisplayPoint.x);
 
-    height = 8;
-    width = 14;
-
-    invDisplayPoint.y = height + 10;
-    invDisplayPoint.x = width + 10;
+    invDisplayPoint.y = charDisplayPoint.y;
+    invDisplayPoint.x = charDisplayPoint.x - width - 2;
     invDisplayWindow = create_newwin(height, width, invDisplayPoint.y, invDisplayPoint.x);
+
+    height = 25;
+    width = COLS - 4;
+    messageDisplayPoint.x = 1;
+    messageDisplayPoint.y = LINES - height - 2;
+    messageWindow = create_newwin(height, width, messageDisplayPoint.y, messageDisplayPoint.x);
+    scrollok(messageWindow, TRUE);
+
+    messageWindowLastMessage = 0;
+    messageWindowMessageSize = sizeof(COLS - 5);
+    messageWindowMessagesLength = height - 2;
     refresh();
     return 0;
 }
@@ -61,6 +81,7 @@ int UpdateCharacterWindow(Character *character)
     mvwprintw(charWindow, y, x, "Gold: %d", character->Gold);
     ++y;
     wmove(charWindow, y, x);
+    mvwprintw(charWindow, 0, 1, "Status");
     wrefresh(charWindow);
     ch = getch();
     if (ch == KEY_F(1) || ch == 'q')
@@ -77,7 +98,6 @@ int UpdateInventoryWindow(Inventory *inventory)
     int y = 2;
     wmove(invDisplayWindow, y, x);
 
-    // 40 is inventory slots, is static could be const?
     for (size_t i = 0; i < INVENTORY_ITEM_SLOTS; i++)
     {
         if (inventory->Items[i])
@@ -102,8 +122,35 @@ int UpdateInventoryWindow(Inventory *inventory)
         }
     }
     box(invDisplayWindow, 0, 0);
-    mvprintw(invDisplayPoint.y, invDisplayPoint.x + 1, "Inventory");
+    mvwprintw(invDisplayWindow, 0, 1, "Inventory");
     wrefresh(invDisplayWindow);
+}
+
+int UpdateMessageWindow()
+{
+    box(messageWindow, 0, 0);
+    mvwprintw(messageWindow, 0, 1, "Messages");
+    wrefresh(messageWindow);
+}
+void SendMessageToMessageWindow(const char *line)
+{
+    // Calculate the length of the original string
+    size_t originalLength = strlen(line);
+    size_t newLength = originalLength < messageWindowMessageSize ? originalLength + 2 : messageWindowMessageSize - 2;
+    messageWindowLastMessage = messageWindowLastMessage < 16 ? messageWindowLastMessage + 1 : 16;
+    // Shift all messages up one
+    for (size_t i = 1; i < messageWindowLastMessage; i++)
+    {
+        strcpy(messageWindowMessages[i], messageWindowMessages[i-1]);
+    }
+    // Set the new 0 pos
+    strlcpy(messageWindowMessages[0], line, 30);
+
+    for (int i = 0; i < messageWindowLastMessage; i++)
+    {
+        mvwprintw(messageWindow, i + 1, 2, messageWindowMessages[i]);
+    }
+    wrefresh(messageWindow);
 }
 
 int EndCurses()
