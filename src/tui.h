@@ -1,12 +1,9 @@
 #pragma once
-#include <character.h>
-#include <inventory.h>
+
+typedef struct Character Character;
+typedef struct Inventory Inventory;
 
 int InitCurses();
-int UpdateCharacterWindow(Character *character);
-int UpdateInventoryWindow(Inventory *inventory);
-int UpdateMessageWindow();
-void SendMessageToMessageWindow(const char* line);
-void PrintDebugTui();
+int UpdateCurses(Inventory *inventory, Character *character);
+int WriteDebugMessage(const char* line);
 int EndCurses();
-int DrawScreenLoop();
