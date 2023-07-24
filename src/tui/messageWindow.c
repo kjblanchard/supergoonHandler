@@ -34,31 +34,25 @@ void SendMessageToMessageWindow(const char *line)
 {
     wclear(messageWindow);
     size_t newLineLength, originalLineLength = 0;
-    // Increment the last message
+    // Increment the last message until we are at the end
     messageWindowLastMessage = messageWindowLastMessage < 16 ? messageWindowLastMessage + 1 : 16;
     // Shift all messages up one, starting with the last
     for (size_t i = messageWindowLastMessage - 1; i > 0; i--)
     {
-        // oldLineLength = strlen(messageWindowMessages[i]);
-        // newLineLength = strlen(messageWindowMessages[i - 1]);
-        // if (oldLineLength > newLineLength)
-            // memset(messageWindowMessages[i], '\0', oldLineLength);
-            // memset(messageWindowMessages[i], '\0', oldLineLength);
         strcpy(messageWindowMessages[i], messageWindowMessages[i - 1]);
     }
-    // Calculate the max length of the line, incase we are over the max line size so it doesn't wrap.
+    // Calculate the max length of the line, so that it isn't bigger than our buffer.
     originalLineLength = strlen(line);
     newLineLength = originalLineLength >= messageWindowMessageSize ? messageWindowMessageSize -1 : originalLineLength;
-    // oldLineLength = strlen(messageWindowMessages[0]);
-    // if (oldLineLength > newLineLength)
-    //     memset(messageWindowMessages[0], '\0', oldLineLength);
     strncpy(messageWindowMessages[0], line, newLineLength);
-    messageWindowMessages[newLineLength] = '\0';
-
+    // Terminate the string incase the old message was longer.
+    messageWindowMessages[0][newLineLength] = '\0';
+    // Write the message onto the window buffer
     for (int i = 0; i < messageWindowLastMessage; i++)
     {
         mvwprintw(messageWindow, i + 1, 2, messageWindowMessages[i]);
     }
+    // Refresh the window
     wrefresh(messageWindow);
 }
 
