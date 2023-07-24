@@ -4,7 +4,7 @@
 #include <tui/tuiShared.h>
 
 static WINDOW *g_invDisplayWindow;
-static Rectangle g_inventoryWindowRect;
+static Gn_Rectangle g_inventoryWindowRect;
 
 int InitInventoryWindow(int x, int y, int width, int height)
 {

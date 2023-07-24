@@ -5,7 +5,7 @@
 #include <character.h>
 
 static WINDOW *g_charWindow;
-static Rectangle g_charWindowRect;
+static Gn_Rectangle g_charWindowRect;
 
 int InitCharWindow(int x, int y, int width, int height)
 {
@@ -43,6 +43,6 @@ int UpdateCharacterWindow(Character *character)
     return 1;
 }
 
-Rectangle GetCharWindowRect();
+Gn_Rectangle GetCharWindowRect();
 Point GetCharWindowPos();
 Point GetCharWindowSize();

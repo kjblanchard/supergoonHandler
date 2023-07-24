@@ -15,6 +15,6 @@
 typedef struct Character Character;
 int InitCharWindow(int x, int y, int width, int height);
 int UpdateCharacterWindow(Character *character);
-Rectangle GetCharWindowRect();
+Gn_Rectangle GetCharWindowRect();
 Point GetCharWindowPos();
 Point GetCharWindowSize();

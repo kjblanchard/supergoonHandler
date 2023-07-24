@@ -10,7 +10,7 @@
  */
 #pragma once
 
-typedef struct Rectangle
+typedef struct Gn_Rectangle
 {
     int x, y, w, h;
-} Rectangle;
+} Gn_Rectangle;

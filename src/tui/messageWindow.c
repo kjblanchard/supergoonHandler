@@ -5,7 +5,7 @@
 #include <primitives/rectangle.h>
 
 static WINDOW *messageWindow;
-static Rectangle g_messageWindowRect;
+static Gn_Rectangle g_messageWindowRect;
 static char **messageWindowMessages;
 static int messageWindowMaxNumMessages;
 static size_t messageWindowMessageSize;
