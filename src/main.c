@@ -9,7 +9,8 @@
 static Settings *settings;
 static Inventory *mainInventory;
 static Character *mainBoi;
-// static char strings[20][20] = {"Helloolgirl", "no u", "onceler", "lorax", "birthdayboi", "turtle", "mal", "bro", "biggie", "smalls", "what", "boring", "old"};
+static char strings[20][20] = {"Helloolgirl", "no u", "onceler", "lorax", "birthdayboi", "turtle", "mal", "bro", "biggie", "smalls", "what", "boring", "old"};
+int bro;
 
 static int Init()
 {
@@ -24,6 +25,7 @@ static int Init()
     InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
     mainInventory = NewInventory(settings);
+    bro = 0;
     InitCurses();
     return 0;
 }
@@ -41,6 +43,8 @@ static int Loop(Character *character)
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
     int shouldExit = UpdateCurses(mainInventory, mainBoi);
+    WriteDebugMessage(strings[bro]);
+    ++bro;
     return shouldExit;
 }
 

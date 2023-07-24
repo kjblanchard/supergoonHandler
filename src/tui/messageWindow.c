@@ -20,6 +20,12 @@ int InitMessageWindow(int x, int y, int width, int height)
     messageWindowLastMessage = 0;
     messageWindowMessageSize = width - 5;
     messageWindowMaxNumMessages = height - 2;
+    // Initialize the strings for use throughout the program to avoid runtime dynamic allocations
+    messageWindowMessages = calloc(messageWindowMaxNumMessages, sizeof(char*));
+    for (size_t i = 0; i < messageWindowMaxNumMessages; i++)
+    {
+        messageWindowMessages[i] = malloc(sizeof(char) * messageWindowMessageSize);
+    }
     messageWindow = create_newwin(g_messageWindowRect.h, g_messageWindowRect.w, g_messageWindowRect.y, g_messageWindowRect.x);
     scrollok(messageWindow, TRUE);
 }
@@ -27,25 +33,27 @@ int InitMessageWindow(int x, int y, int width, int height)
 void SendMessageToMessageWindow(const char *line)
 {
     wclear(messageWindow);
-    size_t newLineLength, oldLineLength = 0;
+    size_t newLineLength, originalLineLength = 0;
     // Increment the last message
     messageWindowLastMessage = messageWindowLastMessage < 16 ? messageWindowLastMessage + 1 : 16;
     // Shift all messages up one, starting with the last
     for (size_t i = messageWindowLastMessage - 1; i > 0; i--)
     {
-        oldLineLength = strlen(messageWindowMessages[i]);
-        newLineLength = strlen(messageWindowMessages[i - 1]);
-        if (oldLineLength > newLineLength)
-            memset(messageWindowMessages[i], '\0', oldLineLength);
+        // oldLineLength = strlen(messageWindowMessages[i]);
+        // newLineLength = strlen(messageWindowMessages[i - 1]);
+        // if (oldLineLength > newLineLength)
+            // memset(messageWindowMessages[i], '\0', oldLineLength);
+            // memset(messageWindowMessages[i], '\0', oldLineLength);
         strcpy(messageWindowMessages[i], messageWindowMessages[i - 1]);
     }
     // Calculate the max length of the line, incase we are over the max line size so it doesn't wrap.
-    newLineLength = strlen(line);
-    newLineLength = newLineLength > messageWindowMessageSize ? messageWindowMessageSize : newLineLength;
-    oldLineLength = strlen(messageWindowMessages[0]);
-    if (oldLineLength > newLineLength)
-        memset(messageWindowMessages[0], '\0', oldLineLength);
+    originalLineLength = strlen(line);
+    newLineLength = originalLineLength >= messageWindowMessageSize ? messageWindowMessageSize -1 : originalLineLength;
+    // oldLineLength = strlen(messageWindowMessages[0]);
+    // if (oldLineLength > newLineLength)
+    //     memset(messageWindowMessages[0], '\0', oldLineLength);
     strncpy(messageWindowMessages[0], line, newLineLength);
+    messageWindowMessages[newLineLength] = '\0';
 
     for (int i = 0; i < messageWindowLastMessage; i++)
     {
