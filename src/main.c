@@ -10,6 +10,7 @@ static Settings *settings;
 static Inventory *mainInventory;
 static Character *mainBoi;
 static int bro;
+static char strings[20][20] = {"Helloolgirl", "no u", "onceler", "lorax", "birthdayboi", "turtle", "mal", "bro", "biggie", "smalls", "what", "boring", "old"};
 
 static int Init()
 {
@@ -36,11 +37,12 @@ static int Loop(Character *character)
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
     UpdateInventoryWindow(mainInventory);
-    if(bro < 2)
+    if (bro < 15)
     {
+        SendMessageToMessageWindow(strings[bro]);
         ++bro;
-        SendMessageToMessageWindow("hello!!! From the boi here");
     }
+    PrintDebugTui();
     if (UpdateCharacterWindow(character))
     {
         return 1;
