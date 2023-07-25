@@ -37,7 +37,7 @@ InitCurses()
     x = ((COLS - width) / 2) + (width + 2);
     InitUnitWindow(x, y, width, height);
 
-    height = 25;
+    height = 6;
     width = COLS - 4;
     x = 1;
     y = LINES - height - 2;

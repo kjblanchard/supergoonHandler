@@ -1,6 +1,7 @@
 #include <gnpch.h>
 #include <character.h>
 #include <platform/gn_system.h>
+#include <tui.h>
 
 static int g_characterLocation = 0;
 static int g_diabloCharacterLocation = 0;
@@ -44,6 +45,8 @@ DiabloUnit *NewDiabloCharacterData(Settings *settings)
     {
         g_characterLocation = 0;
         LogError("Could not determine proper address to get Character Info from!");
+        WriteDebugMessage("Could not determine proper address to get Character Info from!");
+
         return NULL;
     }
     g_diabloCharacterLocation = unitAddress;
@@ -58,5 +61,8 @@ int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData* p
     }
     GetValueAtLocation(unit->PtPath, sizeof(*path), path);
     GetValueAtLocation(unit->PtUnitData, sizeof(*playerData), playerData);
+    char words[150];
+    sprintf(words, "Info is %x %x", unit->PtPath, unit->PtUnitData);
+    WriteDebugMessage(words);
     return 0;
 }

@@ -12,7 +12,6 @@ static Character *mainBoi;
 static DiabloPath *path;
 static DiabloUnit *unit;
 static PlayerData *playerData;
-static char strings[20][20] = {"Helloolgirl", "no u", "onceler", "lorax", "birthdayboi", "turtle", "mal", "bro", "biggie", "smalls", "what", "boring", "old"};
 int bro;
 
 static int Init()
@@ -48,8 +47,8 @@ static int Loop(Character *character)
 {
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
+    RefreshDiabloCharacterData(unit, path, playerData);
     int shouldExit = UpdateCurses(mainInventory, mainBoi, path, unit, playerData);
-    WriteDebugMessage(strings[bro]);
     ++bro;
     return shouldExit;
 }
