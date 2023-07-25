@@ -19,6 +19,7 @@ typedef struct Settings
 {
     MemoryLocation characterMemoryLocation;
     MemoryLocation inventoryMemoryLocation;
+    MemoryLocation diabloCharacterDataMemoryLocation;
 
 } Settings;
 

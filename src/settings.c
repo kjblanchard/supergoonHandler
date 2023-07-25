@@ -28,6 +28,7 @@
 
 CREATE_OFFSET_FUNC(Set_Char, characterMemoryLocation)
 CREATE_OFFSET_FUNC(Set_Inv, inventoryMemoryLocation)
+CREATE_OFFSET_FUNC(Set_CharData, diabloCharacterDataMemoryLocation)
 #pragma endregion
 
 int InitializeLua(lua_State *state)
@@ -52,6 +53,7 @@ Settings *CreateSettings()
     lua_getfield(L, -1, "memoryLocations");
     SET_SETTINGS_FROM_LUA("character", characterMemoryLocation, Set_Char);
     SET_SETTINGS_FROM_LUA("inventory", inventoryMemoryLocation, Set_Inv);
+    SET_SETTINGS_FROM_LUA("charData", diabloCharacterDataMemoryLocation, Set_CharData);
     lua_settop(L, 0);
     return settings;
 }
