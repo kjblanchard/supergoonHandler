@@ -20,8 +20,8 @@ int InitCharWindow(int x, int y, int width, int height)
 int UpdateCharacterWindow(Character *character)
 {
     int ch;
-    int x = 5;
-    int y = 3;
+    int x = 3;
+    int y = 1;
     wclear(g_charWindow);
     box(g_charWindow, 0, 0);
     mvwprintw(g_charWindow, y, x, "Health: %d", character->Health);

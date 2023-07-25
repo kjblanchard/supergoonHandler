@@ -8,6 +8,7 @@
 #include <primitives/point.h>
 
 static WINDOW *mainWindow;
+static const int g_updateTimeInMs = 500;
 static const int g_minCharWindowSizeY = 6;
 static const int g_minCharWindowSizeX = 20;
 
@@ -18,14 +19,14 @@ static void InitWindows()
     ypadding = LINES / 10;
     height = g_minCharWindowSizeY + ypadding;
     width = g_minCharWindowSizeX + xpadding;
-    x = (COLS - width) / 4;
+    x = (COLS - width) / 8;
     y = height / 4;
     InitCharWindow(x, y, width, height);
-    x = x - width - 2;
+    x = x + width + 2;
     InitInventoryWindow(x, y, width, height);
-    x = width * 2 + x + 4;
+    x = x + width + 2;
     InitUnitWindow(x, y, width, height);
-    height = LINES / 4;
+    height = LINES / 3;
     width = COLS - 4;
     x = 2;
     y = LINES - height - 2;
@@ -38,7 +39,7 @@ int InitCurses()
     cbreak();
     keypad(stdscr, TRUE);
     // Updates every second
-    timeout(1000);
+    timeout(g_updateTimeInMs);
     start_color();
     init_pair(1, COLOR_YELLOW, COLOR_GREEN);
     init_pair(2, COLOR_CYAN, COLOR_BLUE);

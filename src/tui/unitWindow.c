@@ -17,8 +17,8 @@ int InitUnitWindow(int x, int y, int width, int height)
 }
 int UpdateUnitWindow(DiabloUnit *unit, DiabloPath *path, PlayerData *playerData)
 {
-    int x = 5;
-    int y = 3;
+    int x = 3;
+    int y = 1;
     wclear(g_UnitWindow);
     box(g_UnitWindow, 0, 0);
     mvwprintw(g_UnitWindow, y, x, "Name %s", playerData->Name);
