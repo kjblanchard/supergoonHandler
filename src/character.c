@@ -52,7 +52,7 @@ DiabloUnit *NewDiabloCharacterData(Settings *settings)
     g_diabloCharacterLocation = unitAddress;
     return unit;
 }
-int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData* playerData)
+int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData *playerData)
 {
     if (g_diabloCharacterLocation && !GetValueAtLocation(g_diabloCharacterLocation, sizeof(*unit), unit))
     {

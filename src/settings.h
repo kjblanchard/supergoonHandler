@@ -9,9 +9,10 @@
  *
  */
 #pragma once
-typedef struct MemoryLocation {
+typedef struct MemoryLocation
+{
     int offsetCount;
-    unsigned long* offsets;
+    unsigned long *offsets;
 
 } MemoryLocation;
 

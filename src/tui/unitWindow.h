@@ -15,4 +15,4 @@ typedef struct DiabloPath DiabloPath;
 typedef struct PlayerData PlayerData;
 
 int InitUnitWindow(int x, int y, int width, int height);
-int UpdateUnitWindow(DiabloUnit* unit, DiabloPath* path, PlayerData* playerData);
+int UpdateUnitWindow(DiabloUnit *unit, DiabloPath *path, PlayerData *playerData);

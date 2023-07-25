@@ -21,7 +21,7 @@ int InitMessageWindow(int x, int y, int width, int height)
     messageWindowMessageSize = width - 5;
     messageWindowMaxNumMessages = height - 2;
     // Initialize the strings for use throughout the program to avoid runtime dynamic allocations
-    messageWindowMessages = calloc(messageWindowMaxNumMessages, sizeof(char*));
+    messageWindowMessages = calloc(messageWindowMaxNumMessages, sizeof(char *));
     for (size_t i = 0; i < messageWindowMaxNumMessages; i++)
     {
         messageWindowMessages[i] = malloc(sizeof(char) * messageWindowMessageSize);
@@ -43,7 +43,7 @@ void SendMessageToMessageWindow(const char *line)
     }
     // Calculate the max length of the line, so that it isn't bigger than our buffer.
     originalLineLength = strlen(line);
-    newLineLength = originalLineLength >= messageWindowMessageSize ? messageWindowMessageSize -1 : originalLineLength;
+    newLineLength = originalLineLength >= messageWindowMessageSize ? messageWindowMessageSize - 1 : originalLineLength;
     strncpy(messageWindowMessages[0], line, newLineLength);
     // Terminate the string incase the old message was longer.
     messageWindowMessages[0][newLineLength] = '\0';
