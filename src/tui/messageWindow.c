@@ -35,7 +35,7 @@ void SendMessageToMessageWindow(const char *line)
     wclear(messageWindow);
     size_t newLineLength, originalLineLength = 0;
     // Increment the last message until we are at the end
-    messageWindowLastMessage = messageWindowLastMessage < 16 ? messageWindowLastMessage + 1 : 16;
+    messageWindowLastMessage = messageWindowLastMessage < messageWindowMaxNumMessages ? messageWindowLastMessage + 1 : messageWindowMaxNumMessages;
     // Shift all messages up one, starting with the last
     for (size_t i = messageWindowLastMessage - 1; i > 0; i--)
     {
@@ -53,7 +53,7 @@ void SendMessageToMessageWindow(const char *line)
         mvwprintw(messageWindow, i + 1, 2, messageWindowMessages[i]);
     }
     // Refresh the window
-    wrefresh(messageWindow);
+    UpdateMessageWindow();
 }
 
 int UpdateMessageWindow()

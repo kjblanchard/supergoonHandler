@@ -7,14 +7,36 @@
 #include <tui/unitWindow.h>
 #include <primitives/point.h>
 
-InitCurses()
-{
-    initscr();            /* Start curses mode 		*/
-    cbreak();             /* Line buffering disabled, Pass on
-                           * everty thing to me 		*/
-    keypad(stdscr, TRUE); /* I need that nifty F1 	*/
+static WINDOW *mainWindow;
+static const int g_minCharWindowSizeY = 6;
+static const int g_minCharWindowSizeX = 20;
 
-    printw("Supergoon Bot\nPress F1 to exit\n");
+static void InitWindows()
+{
+    int width, height, x, y, xpadding, ypadding;
+    xpadding = COLS / 20;
+    ypadding = LINES / 10;
+    height = g_minCharWindowSizeY + ypadding;
+    width = g_minCharWindowSizeX + xpadding;
+    x = (COLS - width) / 4;
+    y = height / 4;
+    InitCharWindow(x, y, width, height);
+    x = x - width - 2;
+    InitInventoryWindow(x, y, width, height);
+    x = width * 2 + x + 4;
+    InitUnitWindow(x, y, width, height);
+    height = LINES / 4;
+    width = COLS - 4;
+    x = 2;
+    y = LINES - height - 2;
+    InitMessageWindow(x, y, width, height);
+}
+
+int InitCurses()
+{
+    mainWindow = initscr();
+    cbreak();
+    keypad(stdscr, TRUE);
     // Updates every second
     timeout(1000);
     start_color();
@@ -23,35 +45,19 @@ InitCurses()
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     init_pair(4, COLOR_RED, COLOR_BLACK);
     use_default_colors();
-
-    int width, height, x, y;
-    height = 10;
-    width = 20;
-    x = (COLS - width) / 2;
-    y = height;
-    InitCharWindow(x, y, width, height);
-
-    x = x - width - 2;
-    InitInventoryWindow(x, y, width, height);
-
-    x = ((COLS - width) / 2) + (width + 2);
-    InitUnitWindow(x, y, width, height);
-
-    height = 6;
-    width = COLS - 4;
-    x = 1;
-    y = LINES - height - 2;
-    InitMessageWindow(x, y, width, height);
+    box(mainWindow, 0, 0);
+    mvwprintw(mainWindow, 0, 2, "Supergoon Bot");
     refresh();
+    InitWindows();
     return 0;
 }
 
-int UpdateCurses(Inventory *inventory, Character *character, DiabloPath* path, DiabloUnit* unit, PlayerData* data)
+int UpdateCurses(Inventory *inventory, Character *character, DiabloPath *path, DiabloUnit *unit, PlayerData *data)
 {
-    UpdateMessageWindow();
     UpdateInventoryWindow(inventory);
-    int shouldExit = UpdateCharacterWindow(character);
     UpdateUnitWindow(unit, path, data);
+    UpdateMessageWindow();
+    int shouldExit = UpdateCharacterWindow(character);
     return shouldExit;
 }
 
