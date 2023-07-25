@@ -1,151 +1,74 @@
+#include <gnpch.h>
 #include <tui.h>
 #include <platform/gn_curses.h>
+#include <tui/messageWindow.h>
+#include <tui/charWindow.h>
+#include <tui/inventoryWindow.h>
+#include <tui/unitWindow.h>
+#include <primitives/point.h>
 
-struct Point
+static WINDOW *mainWindow;
+static const int g_updateTimeInMs = 500;
+static const int g_minCharWindowSizeY = 6;
+static const int g_minCharWindowSizeX = 20;
+
+static void InitWindows()
 {
-    int x;
-    int y;
-};
+    int width, height, x, y, xpadding, ypadding;
+    xpadding = COLS / 20;
+    ypadding = LINES / 10;
+    height = g_minCharWindowSizeY + ypadding;
+    width = g_minCharWindowSizeX + xpadding;
+    x = (COLS - width) / 8;
+    y = height / 4;
+    InitCharWindow(x, y, width, height);
+    x = x + width + 2;
+    InitInventoryWindow(x, y, width, height);
+    x = x + width + 2;
+    InitUnitWindow(x, y, width, height);
+    height = LINES / 3;
+    width = COLS - 4;
+    x = 2;
+    y = LINES - height - 2;
+    InitMessageWindow(x, y, width, height);
+}
 
-WINDOW *create_newwin(int height, int width, int starty, int startx);
-void destroy_win(WINDOW *local_win);
-static WINDOW *charWindow;
-static WINDOW *invDisplayWindow;
-static struct Point invDisplayPoint;
-
-InitCurses()
+int InitCurses()
 {
-    initscr();            /* Start curses mode 		*/
-    cbreak();             /* Line buffering disabled, Pass on
-                           * everty thing to me 		*/
-    keypad(stdscr, TRUE); /* I need that nifty F1 	*/
-
-    printw("Supergoon Bot\nPress F1 to exit\n");
+    mainWindow = initscr();
+    cbreak();
+    keypad(stdscr, TRUE);
     // Updates every second
-    timeout(1000);
+    timeout(g_updateTimeInMs);
     start_color();
     init_pair(1, COLOR_YELLOW, COLOR_GREEN);
     init_pair(2, COLOR_CYAN, COLOR_BLUE);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     init_pair(4, COLOR_RED, COLOR_BLACK);
     use_default_colors();
-    int startx, starty, width, height;
-    height = 10;
-    width = 20;
-    starty = (LINES - height) / 2; /* Calculating for a center placement */
-    startx = (COLS - width) / 2;   /* of the window		*/
-    charWindow = create_newwin(height, width, starty, startx);
-
-    height = 8;
-    width = 14;
-
-    invDisplayPoint.y = height + 10;
-    invDisplayPoint.x = width + 10;
-    invDisplayWindow = create_newwin(height, width, invDisplayPoint.y, invDisplayPoint.x);
+    box(mainWindow, 0, 0);
+    mvwprintw(mainWindow, 0, 2, "Supergoon Bot");
     refresh();
+    InitWindows();
     return 0;
 }
-int UpdateCharacterWindow(Character *character)
+
+int UpdateCurses(Inventory *inventory, Character *character, DiabloPath *path, DiabloUnit *unit, PlayerData *data)
 {
-    int ch;
-    int x = 5;
-    int y = 3;
-    wclear(charWindow);
-    box(charWindow, 0, 0);
-    mvwprintw(charWindow, y, x, "Health: %d", character->Health);
-    ++y;
-    mvwprintw(charWindow, y, x, "Mana: %d", character->Mana);
-    ++y;
-    mvwprintw(charWindow, y, x, "Stamina: %d", character->Stamina);
-    ++y;
-    mvwprintw(charWindow, y, x, "Gold: %d", character->Gold);
-    ++y;
-    wmove(charWindow, y, x);
-    wrefresh(charWindow);
-    ch = getch();
-    if (ch == KEY_F(1) || ch == 'q')
-    {
-        return 0;
-    }
-    return 1;
+    UpdateInventoryWindow(inventory);
+    UpdateUnitWindow(unit, path, data);
+    UpdateMessageWindow();
+    int shouldExit = UpdateCharacterWindow(character);
+    return shouldExit;
 }
 
-int UpdateInventoryWindow(Inventory *inventory)
+int WriteDebugMessage(const char *line)
 {
-    wclear(invDisplayWindow);
-    int x = 2;
-    int y = 2;
-    wmove(invDisplayWindow, y, x);
-
-    // 40 is inventory slots, is static could be const?
-    for (size_t i = 0; i < INVENTORY_ITEM_SLOTS; i++)
-    {
-        if (inventory->Items[i])
-        {
-            wattron(invDisplayWindow, COLOR_PAIR(4));
-
-            waddch(invDisplayWindow, 'x');
-            wattroff(invDisplayWindow, COLOR_PAIR(4));
-        }
-        else
-        {
-            wattron(invDisplayWindow, COLOR_PAIR(3));
-            waddch(invDisplayWindow, 'o');
-            wattroff(invDisplayWindow, COLOR_PAIR(3));
-        }
-        ++x;
-        if (x > 11)
-        {
-            x = 2;
-            ++y;
-            wmove(invDisplayWindow, y, x);
-        }
-    }
-    box(invDisplayWindow, 0, 0);
-    mvprintw(invDisplayPoint.y, invDisplayPoint.x + 1, "Inventory");
-    wrefresh(invDisplayWindow);
+    SendMessageToMessageWindow(line);
 }
 
 int EndCurses()
 {
     endwin();
-    return 0;
-}
-WINDOW *create_newwin(int height, int width, int starty, int startx)
-{
-    WINDOW *local_win;
-    local_win = newwin(height, width, starty, startx);
-    // box(local_win, 0, 0); /* 0, 0 gives default characters
-    //                        * for the vertical and horizontal
-    //                        * lines			*/
-    // wrefresh(local_win);  /* Show that box 		*/
-
-    return local_win;
-}
-
-void destroy_win(WINDOW *local_win)
-{
-    /* box(local_win, ' ', ' '); : This won't produce the desired
-     * result of erasing the window. It will leave it's four corners
-     * and so an ugly remnant of window.
-     */
-    wborder(local_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    /* The parameters taken are
-     * 1. win: the window on which to operate
-     * 2. ls: character to be used for the left side of the window
-     * 3. rs: character to be used for the right side of the window
-     * 4. ts: character to be used for the top side of the window
-     * 5. bs: character to be used for the bottom side of the window
-     * 6. tl: character to be used for the top left corner of the window
-     * 7. tr: character to be used for the top right corner of the window
-     * 8. bl: character to be used for the bottom left corner of the window
-     * 9. br: character to be used for the bottom right corner of the window
-     */
-    wrefresh(local_win);
-    delwin(local_win);
-}
-
-int DrawScreenLoop()
-{
     return 0;
 }

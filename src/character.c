@@ -1,8 +1,10 @@
 #include <gnpch.h>
 #include <character.h>
 #include <platform/gn_system.h>
+#include <tui.h>
 
 static int g_characterLocation = 0;
+static int g_diabloCharacterLocation = 0;
 
 Character *NewCharacter(Settings *settings)
 {
@@ -27,8 +29,33 @@ int RefreshCharacter(Character *character)
 {
     if (g_characterLocation && !GetValueAtLocation(g_characterLocation, sizeof(*character), character))
     {
-        LogWarn("Could not update character!");
+        WriteDebugMessage("Could not update character!");
         return 1;
     }
+    return 0;
+}
+
+DiabloUnit *NewDiabloCharacterData(Settings *settings)
+{
+    DiabloUnit *unit = calloc(1, sizeof(*unit));
+    int unitAddress = FindNestedAddress(settings->diabloCharacterDataMemoryLocation.offsets, settings->diabloCharacterDataMemoryLocation.offsetCount);
+    if (!unitAddress)
+    {
+        g_characterLocation = 0;
+        LogError("Could not determine proper address to get Character Unit Info from!");
+        return NULL;
+    }
+    g_diabloCharacterLocation = unitAddress;
+    return unit;
+}
+int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData *playerData)
+{
+    if (g_diabloCharacterLocation && !GetValueAtLocation(g_diabloCharacterLocation, sizeof(*unit), unit))
+    {
+        WriteDebugMessage("Could not update unit info!");
+        return 1;
+    }
+    GetValueAtLocation(unit->PtPath, sizeof(*path), path);
+    GetValueAtLocation(unit->PtUnitData, sizeof(*playerData), playerData);
     return 0;
 }
