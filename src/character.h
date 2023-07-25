@@ -49,7 +49,6 @@ typedef struct DiabloUnit
     uint32_t PtUnitData;
     uint32_t ActNumber;
     uint64_t ReallyNotSure;
-    // uint64_t StillNotSure;
     uint32_t WhatevenIsThis;
     uint32_t PtPath;
 

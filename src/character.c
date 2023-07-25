@@ -5,8 +5,6 @@
 
 static int g_characterLocation = 0;
 static int g_diabloCharacterLocation = 0;
-// static int g_playerDataLocation = 0;
-// static int g_playerPathLocation = 0;
 
 Character *NewCharacter(Settings *settings)
 {
@@ -31,7 +29,7 @@ int RefreshCharacter(Character *character)
 {
     if (g_characterLocation && !GetValueAtLocation(g_characterLocation, sizeof(*character), character))
     {
-        LogWarn("Could not update character!");
+        WriteDebugMessage("Could not update character!");
         return 1;
     }
     return 0;
@@ -44,9 +42,7 @@ DiabloUnit *NewDiabloCharacterData(Settings *settings)
     if (!unitAddress)
     {
         g_characterLocation = 0;
-        LogError("Could not determine proper address to get Character Info from!");
-        WriteDebugMessage("Could not determine proper address to get Character Info from!");
-
+        LogError("Could not determine proper address to get Character Unit Info from!");
         return NULL;
     }
     g_diabloCharacterLocation = unitAddress;
@@ -56,11 +52,10 @@ int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData *p
 {
     if (g_diabloCharacterLocation && !GetValueAtLocation(g_diabloCharacterLocation, sizeof(*unit), unit))
     {
-        LogWarn("Could not update unit!");
+        WriteDebugMessage("Could not update unit info!");
         return 1;
     }
     GetValueAtLocation(unit->PtPath, sizeof(*path), path);
     GetValueAtLocation(unit->PtUnitData, sizeof(*playerData), playerData);
-
     return 0;
 }
