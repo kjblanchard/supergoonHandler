@@ -26,7 +26,7 @@ typedef struct Character
 
 typedef struct PlayerData
 {
-    uint32_t Name;
+    char Name[16];
 
 } PlayerData;
 
@@ -49,7 +49,8 @@ typedef struct DiabloUnit
     uint32_t PtUnitData;
     uint32_t ActNumber;
     uint64_t ReallyNotSure;
-    uint64_t StillNotSure;
+    // uint64_t StillNotSure;
+    uint32_t WhatevenIsThis;
     uint32_t PtPath;
 
 } DiabloUnit;

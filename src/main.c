@@ -12,7 +12,7 @@ static Character *mainBoi;
 static DiabloPath *path;
 static DiabloUnit *unit;
 static PlayerData *playerData;
-int bro;
+// int bro;
 
 static int Init()
 {
@@ -30,7 +30,7 @@ static int Init()
     unit = NewDiabloCharacterData(settings);
     path = calloc(1, sizeof(*path));
     playerData = calloc(1, sizeof(*playerData));
-    bro = 0;
+    // bro = 0;
     InitCurses();
     return 0;
 }
@@ -43,20 +43,20 @@ static int Close()
     return EXIT_SUCCESS;
 }
 
-static int Loop(Character *character)
+static int Loop()
 {
     RefreshCharacter(mainBoi);
     RefreshInventory(mainInventory);
     RefreshDiabloCharacterData(unit, path, playerData);
     int shouldExit = UpdateCurses(mainInventory, mainBoi, path, unit, playerData);
-    ++bro;
+    // ++bro;
     return shouldExit;
 }
 
 int main()
 {
     Init();
-    while (Loop(mainBoi))
+    while (Loop())
     {
     }
     return Close();

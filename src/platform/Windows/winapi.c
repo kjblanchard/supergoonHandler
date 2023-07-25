@@ -75,7 +75,7 @@ int GetValueAtLocation(int memoryLocation, int sizeBytes, void *buffer)
     int result = ReadProcessMemory(g_processHandle, (LPCVOID)memoryLocation, (LPVOID)buffer, sizeBytes, NULL);
     if (result == 0)
     {
-        LogWarn("Problem with reading memory location %x, size of %d, %lud", memoryLocation, sizeBytes, GetLastError());
+        LogDebug("Problem with reading memory location %x, size of %d, %lud", memoryLocation, sizeBytes, GetLastError());
         return false;
     }
     return true;

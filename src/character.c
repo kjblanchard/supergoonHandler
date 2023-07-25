@@ -61,8 +61,6 @@ int RefreshDiabloCharacterData(DiabloUnit *unit, DiabloPath *path, PlayerData* p
     }
     GetValueAtLocation(unit->PtPath, sizeof(*path), path);
     GetValueAtLocation(unit->PtUnitData, sizeof(*playerData), playerData);
-    char words[150];
-    sprintf(words, "Info is %x %x", unit->PtPath, unit->PtUnitData);
-    WriteDebugMessage(words);
+
     return 0;
 }
