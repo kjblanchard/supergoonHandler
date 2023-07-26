@@ -16,11 +16,11 @@
 #pragma once
 typedef enum LogLevel
 {
-    Log_LDefault,
-    Log_LDebug,
-    Log_LInfo,
-    Log_LWarn,
-    Log_LError,
+    Log_LDefault = 0,
+    Log_LDebug = 1,
+    Log_LInfo = 2,
+    Log_LWarn = 3,
+    Log_LError = 4,
 } LogLevel;
 /**
  * @brief Opens and/or creates a file for debug logging.
@@ -62,3 +62,5 @@ void LogWarn(const char *format, ...);
  * @param ... The variables for the printf
  */
 void LogError(const char *format, ...);
+
+void SetLogLevel(int newLevel);

@@ -5,6 +5,7 @@
 #include <tui.h>
 #include <settings.h>
 #include <aux/lua.h>
+#include <scripting/luaGlue.h>
 #include <platform/gn_system.h>
 
 static Settings *settings;
@@ -18,19 +19,21 @@ static int Init()
 {
     InitializeDebugLogFile();
     InitializeLua();
+    LuaLoadFileIntoGlobalState("goonBase.lua");
     settings = CreateSettings();
     if (!settings)
     {
         LogError("Could not generate settings properly!");
         exit(1);
     }
-
+    SetLogLevel(settings->debugLogLevel);
     InitializeMemoryReader();
     mainBoi = NewCharacter(settings);
     mainInventory = NewInventory(settings);
     unit = NewDiabloCharacterData(settings);
     path = calloc(1, sizeof(*path));
     playerData = calloc(1, sizeof(*playerData));
+    InitializeBotLuaL();
     InitCurses();
     return 0;
 }
@@ -49,6 +52,7 @@ static int Loop()
     RefreshInventory(mainInventory);
     RefreshDiabloCharacterData(unit, path, playerData);
     int shouldExit = UpdateCurses(mainInventory, mainBoi, path, unit, playerData);
+    UpdateBotLuaL();
     return shouldExit;
 }
 

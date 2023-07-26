@@ -37,9 +37,12 @@ Settings *CreateSettings()
     Settings *settings = malloc(sizeof(*settings));
     lua_State* L = GetGlobalLuaState();
     LuaLoadFileIntoGlobalState("config.lua");
-
     // -1 settings
     lua_getglobal(L, "Settings");
+    lua_getfield(L, -1, "logLevel");
+    settings->debugLogLevel = lua_tointeger(L, -1);
+    // lua_pop(2);
+    lua_settop(L, -2);
     // -1 memoryLocations -2 settings
     lua_getfield(L, -1, "memoryLocations");
     SET_SETTINGS_FROM_LUA("character", characterMemoryLocation, Set_Char);

@@ -15,7 +15,6 @@ static FILE *open_debug_file = NULL;
 static void Log(LogLevel level, const char *data_to_write);
 /**
  * @brief The log level to log at, this should be sent in via settings.
- * TODO send this in via settings with a init function.
  */
 static LogLevel logLevel = Log_LDebug;
 static const char* logFileName = "errors.log";
@@ -98,4 +97,9 @@ void LogError(const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
     LogSetup(Log_LError, fmt, args);
+}
+
+void SetLogLevel(int newLevel)
+{
+    logLevel = newLevel;
 }

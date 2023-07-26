@@ -9,3 +9,6 @@
  *
  */
 #pragma once
+
+void InitializeBotLuaL();
+void UpdateBotLuaL();

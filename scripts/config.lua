@@ -1,4 +1,11 @@
+LogLevels = {
+    DEBUG = 1,
+    INFO = 2,
+    WARN = 3,
+    ERROR = 4,
+}
 Settings = {
+    logLevel = LogLevels.DEBUG,
     memoryLocations = {
         character = {
             offsets = { 0x004842A8, 0x490 }

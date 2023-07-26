@@ -18,6 +18,7 @@ typedef struct MemoryLocation
 
 typedef struct Settings
 {
+    int debugLogLevel;
     MemoryLocation characterMemoryLocation;
     MemoryLocation inventoryMemoryLocation;
     MemoryLocation diabloCharacterDataMemoryLocation;
