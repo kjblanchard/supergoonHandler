@@ -1,6 +1,20 @@
 #include <gnpch.h>
 #include <aux/lua.h>
 
+static lua_State *g_luaState;
+
+int InitializeLua()
+{
+  g_luaState = luaL_newstate();
+  luaL_openlibs(g_luaState);
+  return 1;
+}
+
+lua_State *GetGlobalLuaState()
+{
+  return g_luaState;
+}
+
 int LuaForEachTable(lua_State *L, void (*func)(int, const char *, void *), void *modifyThing)
 {
   lua_pushnil(L);
@@ -20,15 +34,18 @@ int LuaForEachTable(lua_State *L, void (*func)(int, const char *, void *), void 
   return 0;
 }
 
-int LuaLoadFile(lua_State *L, const char *file)
+int LuaLoadFileIntoGlobalState(const char *file)
 {
-  luaL_loadfile(L, file);
-  int result = lua_pcall(L, 0, 0, 0);
+  static const int bufferSize = 100;
+  char buf[bufferSize];
+  snprintf(buf, bufferSize, "./scripts/%s", file);
+  luaL_loadfile(g_luaState, buf);
+  int result = lua_pcall(g_luaState, 0, 0, 0);
   if (result != LUA_OK)
   {
-    const char *error = lua_tostring(L, -1);
-    LogError("Could not load file, error result: %d, error: %s", result, error);
-    lua_pop(L, 1);
+    const char *error = lua_tostring(g_luaState, -1);
+    LogError("Could not load file %s, error result: %d, error: %s", buf, result, error);
+    lua_pop(g_luaState, 1);
     return false;
   }
   return true;

@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <tui.h>
 #include <settings.h>
+#include <aux/lua.h>
 #include <platform/gn_system.h>
 
 static Settings *settings;
@@ -16,6 +17,7 @@ static PlayerData *playerData;
 static int Init()
 {
     InitializeDebugLogFile();
+    InitializeLua();
     settings = CreateSettings();
     if (!settings)
     {

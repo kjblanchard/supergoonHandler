@@ -31,22 +31,13 @@ CREATE_OFFSET_FUNC(Set_Inv, inventoryMemoryLocation)
 CREATE_OFFSET_FUNC(Set_CharData, diabloCharacterDataMemoryLocation)
 #pragma endregion
 
-int InitializeLua(lua_State *state)
-{
-    luaL_openlibs(state);
-    return 1;
-}
 
 Settings *CreateSettings()
 {
     Settings *settings = malloc(sizeof(*settings));
-    lua_State *L = luaL_newstate();
-    InitializeLua(L);
-    if (!LuaLoadFile(L, "./scripts/config.lua"))
-    {
-        LogError("Could not read settings file!");
-        return NULL;
-    }
+    lua_State* L = GetGlobalLuaState();
+    LuaLoadFileIntoGlobalState("config.lua");
+
     // -1 settings
     lua_getglobal(L, "Settings");
     // -1 memoryLocations -2 settings
